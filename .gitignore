@@ -8,7 +8,7 @@ sessions/Debug
 tests/Debug
 thread/Debug
 trade_demo/Debug
-
+.gitignore
 
 
 #fixed file
