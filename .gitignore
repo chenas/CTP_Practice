@@ -1,3 +1,4 @@
+cfg/
 ctpapiTest/Debug
 CTPApiTestTool/Debug
 Debug/
@@ -16,3 +17,4 @@ trade_demo/Debug
 *.dll
 *.lib
 *.txt
+*.exe
