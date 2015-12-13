@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="apiImpl">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="cfg">
+      <UniqueIdentifier>{cec3872b-7a83-4383-a564-e85c45d54dd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{88611f34-5dc0-4b75-ba59-058b62e7072b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cases.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\cfgutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\apiImpl\traderspimpl.h">
+      <Filter>apiImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="trader.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\stringutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\timeutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cfg\rsh.cfg">
+      <Filter>cfg</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\utility\cfgutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\apiImpl\traderspimpl.cpp">
+      <Filter>apiImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="cases.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="trader.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\stringutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\timeutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\common.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

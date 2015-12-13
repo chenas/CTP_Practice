@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="apiImpl">
+      <UniqueIdentifier>{b5bd57f7-b7a7-4d46-bfd0-de04af668aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{66e2391f-32e2-46d5-9e33-c89dae528404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cfg">
+      <UniqueIdentifier>{0a6330e4-9535-4aeb-bb7c-953d584ce6ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{c783259c-9b7f-4c17-98ab-6dabec91e268}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\cfgutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\stringutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\timeutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\apiImpl\mdimpl.cpp">
+      <Filter>apiImpl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\utility\cfgutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\stringutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\timeutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\apiImpl\mdimpl.h">
+      <Filter>apiImpl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cfg\rsh.cfg">
+      <Filter>cfg</Filter>
+    </None>
+  </ItemGroup>
+</Project>

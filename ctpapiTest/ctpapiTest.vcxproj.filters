@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="utility">
+      <UniqueIdentifier>{2425eac3-85c4-4bfe-b54e-58f75b2d9b31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{5c8b3e31-c7b0-4f46-a6b7-d47c5472b723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="apiImpl">
+      <UniqueIdentifier>{ddada2a5-feda-4e95-a94e-8ad786b62ce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cfg">
+      <UniqueIdentifier>{a781f34b-1161-46af-96e9-fc8283aa3175}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\apiImpl\traderspimpl.cpp">
+      <Filter>apiImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\cfgutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\apiImpl\traderspimpl.h">
+      <Filter>apiImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\cfgutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="trader.h">
+      <Filter>test</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cfg\rsh.cfg">
+      <Filter>cfg</Filter>
+    </None>
+  </ItemGroup>
+</Project>

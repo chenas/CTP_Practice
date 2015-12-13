@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="apiImpl">
+      <UniqueIdentifier>{98be1024-f4c8-4ae4-a79d-01d7534309a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cfg">
+      <UniqueIdentifier>{4471f1eb-18e8-4bc3-92c9-104bb2cdd6a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{96d4b886-a21e-448c-80db-2ebb10f842bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="maker">
+      <UniqueIdentifier>{e775db0f-dde8-4061-b170-8bc0cb3fec57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{e422a21e-757f-4f30-9767-3ac0dce5dc73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="case">
+      <UniqueIdentifier>{acd6a187-48ff-45fa-9bf3-cb3934f455bb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\apiImpl\traderspimpl.cpp">
+      <Filter>apiImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\cfgutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\stringutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utility\timeutil.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\common.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\trader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="cases.cpp">
+      <Filter>maker</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>maker</Filter>
+    </ClCompile>
+    <ClCompile Include="case.cpp">
+      <Filter>case</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\apiImpl\traderspimpl.h">
+      <Filter>apiImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\cfgutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\stringutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utility\timeutil.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\trader.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="cases.h">
+      <Filter>maker</Filter>
+    </ClInclude>
+    <ClInclude Include="case.h">
+      <Filter>case</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\cfg\maker_rsh.cfg">
+      <Filter>cfg</Filter>
+    </None>
+    <None Include="..\cfg\cases.cfg">
+      <Filter>case</Filter>
+    </None>
+  </ItemGroup>
+</Project>
