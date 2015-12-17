@@ -21,7 +21,7 @@ void Common::record2File(const char *msg)
 
 void Common::log2File(const char* msg)
 {
-	std::ofstream o_file("./log.txt",std::ios::app);
+	std::ofstream o_file("../cfg/log.txt",std::ios::app);
 	o_file << "--------------------------" << msg <<"--------------------------"<< std::endl; 
 	o_file.close();				//¹Ø±ÕÎÄ¼þ
 }

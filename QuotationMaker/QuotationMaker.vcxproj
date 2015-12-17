@@ -39,7 +39,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>G:\SFIT\vs2010\ctptest\ctpapi;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -56,7 +56,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>thosttraderapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>thosttraderapi.lib;thostmduserfastapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>E:\SFIT\vs2010\ctptest\ctpapi;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -78,8 +78,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\apiImpl\mdspimpl.cpp" />
     <ClCompile Include="..\apiImpl\traderspimpl.cpp" />
     <ClCompile Include="..\common\common.cpp" />
+    <ClCompile Include="..\common\marketutil.cpp" />
     <ClCompile Include="..\common\trader.cpp" />
     <ClCompile Include="..\utility\cfgutil.cpp" />
     <ClCompile Include="..\utility\stringutil.cpp" />
@@ -89,8 +91,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\apiImpl\mdspimpl.h" />
     <ClInclude Include="..\apiImpl\traderspimpl.h" />
     <ClInclude Include="..\common\common.h" />
+    <ClInclude Include="..\common\DataDefine.h" />
+    <ClInclude Include="..\common\marketutil.h" />
     <ClInclude Include="..\common\trader.h" />
     <ClInclude Include="..\utility\cfgutil.h" />
     <ClInclude Include="..\utility\stringutil.h" />

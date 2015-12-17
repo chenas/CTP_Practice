@@ -80,7 +80,10 @@ void TradeRspImpl::OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthent
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	std::cerr << "brokerID: " << pRspAuthenticateField->BrokerID << " UserID: " << pRspAuthenticateField->UserID << " ProductInfo: " << pRspAuthenticateField->UserProductInfo << std::endl;
 	std::cerr << "RspInfo: " << pRspInfo->ErrorMsg << std::endl;
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///登录请求响应
@@ -91,7 +94,10 @@ void TradeRspImpl::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CT
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	std::cerr << "brokerID: " << pRspUserLogin->BrokerID << " UserID: " << pRspUserLogin->UserID << " ProductInfo: " << std::endl;
 	std::cerr << "RspInfo: " << pRspInfo->ErrorMsg << std::endl;
-	SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///登出请求响应
@@ -119,6 +125,10 @@ void TradeRspImpl::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, 
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	std::cerr << "ErrorID: " << pRspInfo->ErrorID << " ErrorMsg: " << pRspInfo->ErrorMsg
 		<< std::endl;
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///报单录入请求响应
@@ -129,7 +139,10 @@ void TradeRspImpl::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CTho
 	//	<< " instrumentId: " << pInputOrder->InstrumentID << " 买卖方向: " << (pInputOrder->Direction == '0'? "买":"卖") 
 	//	<< " 组合开平标志: " << (pInputOrder->CombOffsetFlag[0] == '0'?"开仓":"平仓") << std::endl;
 	//std::cerr << "--->>> " << "RspInfo: " << pRspInfo->ErrorMsg << std::endl;
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///投资者结算结果确认响应
@@ -139,7 +152,10 @@ void TradeRspImpl::OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmFie
 	std::cerr << "brokerID: " << pSettlementInfoConfirm->BrokerID << " UserID: " << pSettlementInfoConfirm->InvestorID
 		<< std::endl;
 	std::cerr << "RspInfo: " << pRspInfo->ErrorMsg << std::endl;
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///报单通知
@@ -192,7 +208,10 @@ void TradeRspImpl::OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrder
 	std::cerr << "--->>>" << __FUNCTION__ <<std::endl;
 	std::cerr << "InvestorID: " << pInputOrderAction->InvestorID << " InstrumentID: " << pInputOrderAction->InstrumentID << " OrderRef: " << pInputOrderAction->OrderRef << std::endl;
 	std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///请求查询投资者持仓响应
@@ -208,8 +227,8 @@ void TradeRspImpl::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pIn
 	p.InstrumentID = pInvestorPosition->InstrumentID;
 	p.BrokerID = pInvestorPosition->BrokerID;
 	p.InvestorID = pInvestorPosition->InvestorID;
-	p.Position = pInvestorPosition->Position;
-	p.Direction = pInvestorPosition->PosiDirection;
+	p.Position = pInvestorPosition->TodayPosition;
+	p.Direction = pInvestorPosition->PosiDirection - '0';
 	p.YdPosition = pInvestorPosition->YdPosition;
 
 	std::vector<PositionActionPackage>::iterator pit;
@@ -219,7 +238,10 @@ void TradeRspImpl::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pIn
 	{
 		Position.push_back(p);
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///请求查询深度行情响应
@@ -247,8 +269,10 @@ void TradeRspImpl::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDept
 	AskPrice1 = pDepthMarketData->AskPrice1;
 
 	//std::cout << pDepthMarketData->BidPrice1 << "   AskPrice1" << pDepthMarketData->AskPrice1 << std::endl;
-
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///预埋单录入请求响应
@@ -263,7 +287,10 @@ void TradeRspImpl::OnRspParkedOrderInsert(CThostFtdcParkedOrderField *pParkedOrd
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///预埋撤单操作请求响应
@@ -276,7 +303,10 @@ void TradeRspImpl::OnRspParkedOrderAction(CThostFtdcParkedOrderActionField *pPar
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///删除预埋单响应
@@ -289,7 +319,10 @@ void TradeRspImpl::OnRspRemoveParkedOrder(CThostFtdcRemoveParkedOrderField *pRem
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///删除预埋撤单响应
@@ -300,7 +333,10 @@ void TradeRspImpl::OnRspRemoveParkedOrderAction(CThostFtdcRemoveParkedOrderActio
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///请求查询报单响应
@@ -348,7 +384,10 @@ void TradeRspImpl::OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfo
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
 
 ///请求查询资金账户响应
@@ -387,9 +426,11 @@ void TradeRspImpl::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CT
 	AllInstrumentId.insert(pInstrument->InstrumentID);
 	if(!pInstrument->IsTrading)
 		std::cerr << "isTrading  " << pInstrument->IsTrading << std::endl;
-	if(bIsLast) SetEvent(g_hEvent);
+	if(bIsLast) 
+	{
+		SetEvent(g_hEvent);
+	}
 }
-
 
 ///合约交易状态通知
 void TradeRspImpl::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus) 

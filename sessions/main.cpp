@@ -5,6 +5,13 @@
 
 HANDLE  g_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
+
+DWORD WINAPI Login(LPVOID lpParameter)
+{
+
+}
+
+
 int main()
 {
 	//«Î«Û±‡∫≈

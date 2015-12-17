@@ -8,17 +8,20 @@ string caseFilePath = "../cfg/cases.cfg";
 Cases::Cases()
 {
 	pTrader = new Trader();
+	pMarketUtil = new MarketUtil();
 	getCfg = CfgUtil::getInstance(cfgFilePath);
 	volume = StringUtil::stringToInt(getCfg->getPara("Volume"));
 	holdVolume = StringUtil::stringToInt(getCfg->getPara("HoldVolume"));
 	noTradedVolume = StringUtil::stringToInt(getCfg->getPara("NoTradedVolume"));
+	IsUseClosePosition = getCfg->getParaInt("IsUseClosePosition");
 	pCaseFactory = new CaseFactory();
 	initData();
 }
 
 void Cases::run()
 {
-	Sleep(3000);
+	Sleep(300);
+	pMarketUtil->openMdLog();
 	for (int i=0; i<vCases.size(); i++)
 	{
 		Common::record2File((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " begin").c_str());
@@ -29,23 +32,33 @@ void Cases::run()
 			switch ((*mit).first)
 			{
 			case 1:
+				pMarketUtil->subcribeMarketData((*mit).second);
 				makeLimit((*mit).second, true);
+				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(1000);
 				break;
 			case 2:
+				pMarketUtil->subcribeMarketData((*mit).second);
 				makeLimit((*mit).second, false);
+				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(1000);
 				break;
 			case 3:
+				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, true);
+				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(1000);
 				break;
 			case 4:
+				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, false);
+				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(1000);
 				break;
 			case 5:
+				pMarketUtil->subcribeMarketData((*mit).second);
 				sendOrderRandom((*mit).second);
+				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(1000);
 				break;
 			case -1:
@@ -59,8 +72,13 @@ void Cases::run()
 
 		pTrader->orderAction();
 	}
+	pMarketUtil->closeMdLog();
+	
 	///查询持仓，平仓
-	//pTrader->qryPosition();
+	if (IsUseClosePosition)
+	{
+		pTrader->qryPosition();
+	}	
 }
 
 ///将最新价提高到指定价格
@@ -140,9 +158,9 @@ void Cases::initData()
 	}
 	std::cout << "-----------------------------" << std::endl;
 
-	//pTrader->orderAction();
-	
-	//Sleep(100000);
+	//pTrader->qryPosition();
+	ResetEvent(g_hEvent);
+	WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///保持涨停/跌停

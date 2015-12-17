@@ -249,6 +249,7 @@ void WriteMarginRate2File()
 		fclose(pFile);
 	}
 }
+
 DWORD WINAPI Thread_QryRate(LPVOID pParam)
 {
 	string strKey;
@@ -426,6 +427,7 @@ void Show()
 	printf(pTmp);
 	printf("\r\n****************************************************");
 }
+
 DWORD WINAPI Thread_Show(LPVOID pParam)
 {
 	while(true)
@@ -434,6 +436,7 @@ DWORD WINAPI Thread_Show(LPVOID pParam)
 		Show();
 	}
 }
+
 DWORD WINAPI Cala_Position_Trade(LPVOID pTrade)
 {///因成交而修改持仓
 	CThostFtdcTradeField Trade = *(CThostFtdcTradeField*)pTrade;
@@ -999,6 +1002,7 @@ DWORD WINAPI Cala_Position_Trade(LPVOID pTrade)
 #endif
 	return  1;
 }
+
 DWORD WINAPI Cala_Position_Order(LPVOID pOrder)
 {///因平仓下单而修改冻结量
 	CThostFtdcOrderField Order = *(CThostFtdcOrderField*)pOrder;

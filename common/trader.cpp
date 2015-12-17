@@ -1,7 +1,6 @@
 #pragma once
 
 #include "trader.h"
-#include "common.h"
 
 
 Trader::Trader()
@@ -32,22 +31,19 @@ Trader::Trader()
 	tradeApi->SubscribePrivateTopic(THOST_TERT_QUICK);
 	tradeApi->SubscribePublicTopic(THOST_TERT_QUICK);
 	tradeApi->Init();
-
-	Sleep(3000);
+	WaitForSingleObject(g_hEvent, INFINITE);
 
 	userLogin();
-	Sleep(100);
+	
 	settleComfirm();
 
 	CThostFtdcQryInstrumentField instrument;
 	memset(&instrument, 0, sizeof(instrument));
 	tradeApi->ReqQryInstrument(&instrument, ++reqId);
-
-	Sleep(3500);
-	std::cerr << "市场总合约个数：" << AllInstrumentId.size() << "  初始化中..." << std::endl;
-	Sleep(4500);
-
 	WaitForSingleObject(g_hEvent,INFINITE);
+
+	std::cerr << "市场总合约个数：" << AllInstrumentId.size() << "  初始化中..." << std::endl;
+	
 }
 
 Trader::~Trader()
@@ -56,11 +52,10 @@ Trader::~Trader()
 	tradeApi->Release();
 }
 
-
 ///报单
 ///instrumentId 合约
 ///buySell 买卖方向 0.买  1.卖
-///openClose 开平标志  0.开仓   1.平仓  3.平今
+///openClose 开平标志  0.开仓   1.平仓  3.平今  4.平作
 ///volume 手数
 ///price 价格
 void Trader::sendOrder(const char* instrumentId, int buySell, int openClose, int volume, double price)
@@ -88,6 +83,8 @@ void Trader::sendOrder(const char* instrumentId, int buySell, int openClose, int
 		inputOrder.CombOffsetFlag[0] = THOST_FTDC_OF_Close;
 	else if (openClose == 3)
 		inputOrder.CombOffsetFlag[0] = THOST_FTDC_OF_CloseToday;
+	else if (openClose == 4)
+		inputOrder.CombOffsetFlag[0] = THOST_FTDC_OF_CloseYesterday; //平昨
 
 	///组合投机套保标志
 	inputOrder.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;	//投机
@@ -222,6 +219,7 @@ void Trader::userLogin()
 	strcpy(loginField.UserProductInfo, productInfo.c_str());
 	int rtn = tradeApi->ReqUserLogin(&loginField, ++reqId);
 	std::cerr << "---->>>发送登录请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
+	WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///结算结果确认
@@ -233,19 +231,21 @@ void Trader::settleComfirm()
 	strcpy(SettlementInfoConfirm.InvestorID, userId.c_str());
 	int rtn = tradeApi->ReqSettlementInfoConfirm(&SettlementInfoConfirm, ++reqId);
 	std::cerr << "---->>>发送结算确认请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
+	WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///撤掉全部未成交的单子
 void Trader::orderAction()
 {
-	Sleep(1000);
+	ResetEvent(g_hEvent);
 	CThostFtdcQryOrderField order;
 	strcpy(order.BrokerID, brokerId.c_str());
 	strcpy(order.InvestorID, userId.c_str());
 	memset(&order, 0, sizeof(order));
 	int rtn = tradeApi->ReqQryOrder(&order, ++reqId);
 	std::cerr << "---->>>发送委托查询" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent, INFINITE);
+
 	std::cout << "--------开始撤单--------" << std::endl;
 
 	for (int i=0; i<NoTradedOrder.size(); i++)
@@ -262,6 +262,7 @@ void Trader::orderAction()
 		int rtn = tradeApi->ReqOrderAction(&order, ++reqId);
 		std::cerr << "---->>>发送撤单请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
 	}
+	
 	vector<OrderActionPackge>().swap(NoTradedOrder);
 	std::cout << "--------撤单完成--------" << std::endl;
 
@@ -270,6 +271,8 @@ void Trader::orderAction()
 ///查询挂单数量
 int Trader::qryOrder(const char* instrumentId)
 {
+	
+	ResetEvent(g_hEvent);
 	CThostFtdcQryOrderField order;
 	strcpy(order.BrokerID, brokerId.c_str());
 	strcpy(order.InvestorID, userId.c_str());
@@ -277,31 +280,36 @@ int Trader::qryOrder(const char* instrumentId)
 	memset(&order, 0, sizeof(order));
 	int rtn = tradeApi->ReqQryOrder(&order, ++reqId);
 	std::cerr << "---->>>发送委托查询" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(300);
+	WaitForSingleObject(g_hEvent, INFINITE);
 	return NoTradedNumber;
 }
 
 ///查询持仓，然后平仓
 void Trader::qryPosition()
-{
+{	
+	ResetEvent(g_hEvent);
 	CThostFtdcQryInvestorPositionField QryInvestorPosition;
 	memset(&QryInvestorPosition, 0, sizeof(QryInvestorPosition));
 	strcpy(QryInvestorPosition.BrokerID, brokerId.c_str());
 	strcpy(QryInvestorPosition.InvestorID, userId.c_str());
 	int rtn = tradeApi->ReqQryInvestorPosition(&QryInvestorPosition, ++reqId);
 	std::cerr << "---->>>发送查询持仓请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(3000);
+	WaitForSingleObject(g_hEvent, INFINITE);
 	std::cout << "--------平仓开始--------" << std::endl;
+	//Position.size()
 	for (int i=0; i<Position.size(); i++)
 	{
-		int buySell = Position[i].Direction == 2 ? 1:0;
+		/// Direction;  //2、多，3、空
+		///buySell 买卖方向 0.买  1.卖
+		int buySell = (Position[i].Direction == 2 ? 1:0);
+		///openClose 开平标志  0.开仓   1.平仓  3.平今  4.平昨
 		if (Position[i].Position > 0)  ///平今
 		{
 			sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, Position[i].Position, getLowerLimitPrice(Position[i].InstrumentID.c_str()));
 		}
 		if (Position[i].YdPosition > 0)  ///平昨
 		{
-			sendOrder(Position[i].InstrumentID.c_str(), buySell, 1, Position[i].YdPosition, getLowerLimitPrice(Position[i].InstrumentID.c_str()));
+			sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, Position[i].YdPosition, getLowerLimitPrice(Position[i].InstrumentID.c_str()));
 		}
 		Sleep(100);
 	}

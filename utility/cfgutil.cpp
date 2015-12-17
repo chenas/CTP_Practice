@@ -127,6 +127,18 @@ string CfgUtil::getPara(string key)
 	return "";
 }
 
+int CfgUtil::getParaInt(string key)
+{	
+	map<string, string>::const_iterator mite = _map.begin();
+	for (; mite != _map.end(); ++mite) {
+		if(mite->first == key)
+		{
+			return atoi(mite->second.c_str());
+		}
+	}
+	return 0;
+}
+
 CfgUtil::~CfgUtil()
 {
 }

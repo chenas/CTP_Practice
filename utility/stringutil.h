@@ -2,11 +2,7 @@
 #ifndef STRINGUTIL_H
 #define STRINGUITL_H
 
-#include <string>
-#include <vector>
-#include <sstream>
-
-using namespace std;
+#include "../common/DataDefine.h"
 
 class StringUtil
 {

@@ -2,9 +2,9 @@
 #ifndef _CASES_H_
 #define _CASES_H_
 #include "../common/trader.h"
+#include "../common/marketutil.h"
 #include <vector>
 #include <conio.h> 
-#include "../common/common.h"
 #include "../utility/stringutil.h"
 #include "case.h"
 
@@ -54,6 +54,7 @@ public:
 private:
 
 	Trader* pTrader;
+	MarketUtil* pMarketUtil;
 
 	CfgUtil* getCfg;
 	CaseFactory* pCaseFactory;
@@ -67,6 +68,9 @@ private:
 	int holdVolume;
 	///未成交数量
 	int noTradedVolume;
+
+	///是否开启平仓功能
+	int IsUseClosePosition;
 
 	//废弃
 	void MainMenu();

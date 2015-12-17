@@ -20,6 +20,7 @@ public:
 	static CfgUtil *getInstance(string cfgPath);
 	void reloadCfg(string cfgPath);
 	string getPara(string key);
+	int getParaInt(string key);
 	~CfgUtil();
 
 protected:

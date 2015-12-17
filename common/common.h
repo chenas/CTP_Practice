@@ -11,7 +11,7 @@
 #include "../utility/timeutil.h"
 #include "../utility/stringutil.h"
 
-static string TradingLogFilePath = "trading_log.txt";
+static string TradingLogFilePath = "../cfg/trading_log.txt";
 
 class Common
 {
