@@ -159,8 +159,8 @@ void Cases::initData()
 	std::cout << "-----------------------------" << std::endl;
 
 	//pTrader->qryPosition();
-	ResetEvent(g_hEvent);
-	WaitForSingleObject(g_hEvent, INFINITE);
+	//ResetEvent(g_hEvent);
+	//WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///±£³ÖÕÇÍ£/µøÍ£
