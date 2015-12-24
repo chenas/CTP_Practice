@@ -40,8 +40,7 @@ int MarketUtil::subcribeMarketData(vector<PriceData *> vData)
 		vInstrument.push_back((*viPriceData)->InstrumentId);
 	}
 
-	char** ppInstr = new char * [5];
-
+	char** ppInstr = new char * [500];
 	for (int i=0; i<vSize; i++)
 	{
 		const char* strContent=vInstrument[i];
@@ -67,7 +66,7 @@ int MarketUtil::unSubscribeMarketData(vector<PriceData *> vData)
 		vInstrument.push_back((*viPriceData)->InstrumentId);
 	}
 
-	char** ppInstr = new char * [5];
+	char** ppInstr = new char * [500];
 
 	for (int i=0; i<vSize; i++)
 	{
@@ -94,6 +93,11 @@ bool MarketUtil::closeMdLog()
 	return _mdRspImpl->closeFile();
 }
 
+void MarketUtil::writeSeparator(const char* msg)
+{
+	_mdRspImpl->writeSeparator(msg);
+}
+
 void MarketUtil::userLogin()
 {
 	CThostFtdcReqUserLoginField loginField;
@@ -106,6 +110,9 @@ void MarketUtil::userLogin()
 	std::cerr << "---->>>发送登录请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
 	WaitForSingleObject(g_hEvent, INFINITE);
 }
+
+
+
 
 
 

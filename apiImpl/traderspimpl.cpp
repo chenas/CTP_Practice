@@ -2,7 +2,7 @@
 #include "traderspimpl.h"
 
 
-HANDLE  g_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+extern HANDLE  g_hEvent;
 
 ///撤单组合一
 ///报单引用
@@ -55,7 +55,7 @@ std::vector<PositionActionPackage> Position;
 void TradeRspImpl::OnFrontConnected()
 {
 	std::cerr.precision(6); 
-    std::cerr.setf(std::ios::fixed); 
+	std::cerr.setf(std::ios::fixed); 
 	//std::cerr.setf(std::cerr.showpoint);
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	SetEvent(g_hEvent);
@@ -165,7 +165,7 @@ void TradeRspImpl::OnRtnOrder(CThostFtdcOrderField *pOrder)
 	strcpy(OrderRef, pOrder->OrderRef);
 	strcpy(ExchangeID, pOrder->ExchangeID);
 	strcpy(OrderSysID, pOrder->OrderSysID);
-	
+
 	//std::cerr << "--->>>" << __FUNCTION__ <<std::endl;
 	//std::cerr << "InvestorID: " << pOrder->InvestorID << " InstrumentID: " << pOrder->InstrumentID 
 	//	<< " OrderStatus: " << pOrder->OrderStatus << " OrderRef" << pOrder->OrderRef 
@@ -173,7 +173,7 @@ void TradeRspImpl::OnRtnOrder(CThostFtdcOrderField *pOrder)
 
 	/*if (pOrder->OrderStatus == '5')
 	{
-		std::cout << "出现错单" << std::endl;
+	std::cout << "出现错单" << std::endl;
 	}*/
 
 }
@@ -343,29 +343,32 @@ void TradeRspImpl::OnRspRemoveParkedOrderAction(CThostFtdcRemoveParkedOrderActio
 void TradeRspImpl::OnRspQryOrder(CThostFtdcOrderField *pOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	//std::cerr << "--->>>" << __FUNCTION__ <<std::endl;
-	if (pOrder->OrderStatus == THOST_FTDC_OST_PartTradedQueueing || pOrder->OrderStatus == THOST_FTDC_OST_PartTradedNotQueueing || 
-		pOrder->OrderStatus == THOST_FTDC_OST_NoTradeQueueing || pOrder->OrderStatus == THOST_FTDC_OST_NoTradeNotQueueing)
+	if (pOrder != NULL)
 	{
-		OrderActionPackge order;
-		memset(&order, 0, sizeof(order));
-		order.BrokerID = pOrder->BrokerID;		
-		order.InvestorID = pOrder->InvestorID;
-		order.InstrumentID = pOrder->InstrumentID;
-		order.OrderSysID = pOrder->OrderSysID;
-		order.ExchangeID = pOrder->ExchangeID;
-		order.VolumeChange = pOrder->VolumeTotal;
-		std::vector<OrderActionPackge>::iterator it;
-		it = find(NoTradedOrder.begin(), NoTradedOrder.end(), order);
-		if (it == NoTradedOrder.end())
+		if (pOrder->OrderStatus == THOST_FTDC_OST_PartTradedQueueing || pOrder->OrderStatus == THOST_FTDC_OST_PartTradedNotQueueing || 
+			pOrder->OrderStatus == THOST_FTDC_OST_NoTradeQueueing || pOrder->OrderStatus == THOST_FTDC_OST_NoTradeNotQueueing)
 		{
-			NoTradedOrder.push_back(order);			
+			OrderActionPackge order;
+			memset(&order, 0, sizeof(order));
+			order.BrokerID = pOrder->BrokerID;		
+			order.InvestorID = pOrder->InvestorID;
+			order.InstrumentID = pOrder->InstrumentID;
+			order.OrderSysID = pOrder->OrderSysID;
+			order.ExchangeID = pOrder->ExchangeID;
+			order.VolumeChange = pOrder->VolumeTotal;
+			std::vector<OrderActionPackge>::iterator it;
+			it = find(NoTradedOrder.begin(), NoTradedOrder.end(), order);
+			if (it == NoTradedOrder.end())
+			{
+				NoTradedOrder.push_back(order);			
+			}
+			NoTradedNumber += pOrder->VolumeTotal;
+			//std::cerr << "IstrumentID: " << pOrder->InstrumentID << " OrderStatus: " << pOrder->OrderStatus
+			//<< " VolumeTotal: " << pOrder->VolumeTotal << std::endl;
+
 		}
-		NoTradedNumber += pOrder->VolumeTotal;
-		//std::cerr << "IstrumentID: " << pOrder->InstrumentID << " OrderStatus: " << pOrder->OrderStatus
-		//<< " VolumeTotal: " << pOrder->VolumeTotal << std::endl;
-		
 	}
-	if (pRspInfo)
+	if (pRspInfo != NULL)
 	{
 		std::cerr << "ErrorMsg: " << pRspInfo->ErrorMsg << std::endl;
 	}
@@ -423,8 +426,11 @@ void TradeRspImpl::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CT
 	//std::cerr << "--->>>" << __FUNCTION__ <<std::endl;
 	//std::cerr << "--->>>" << pInstrument->InstrumentID << std::endl;
 	PriceTick = pInstrument->PriceTick;
-	AllInstrumentId.insert(pInstrument->InstrumentID);
-	if(!pInstrument->IsTrading)
+	if ( pInstrument->IsTrading == 1)
+	{
+		AllInstrumentId.insert(pInstrument->InstrumentID);
+	}	
+	if(pInstrument->IsTrading == 0)
 		std::cerr << "isTrading  " << pInstrument->IsTrading << std::endl;
 	if(bIsLast) 
 	{

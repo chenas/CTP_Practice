@@ -22,6 +22,8 @@ public:
 
 	bool openFile();
 	bool closeFile();
+	void writeSeparator(const char* msg);
+
 	//¡¨Ω”«∞÷√
 	void OnFrontConnected();
 	
@@ -50,7 +52,7 @@ public:
 	void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData);
 	
 private:
-	std::fstream mdlogstream;
+	std::ofstream mdlogstream;
 	int isPrintPrice;
 	CfgUtil* cfgUtil;
 

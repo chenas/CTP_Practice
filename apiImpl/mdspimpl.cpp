@@ -13,6 +13,14 @@ bool MdRspImpl::closeFile()
 	return true;
 }
 
+void MdRspImpl::writeSeparator(const char* msg)
+{	
+	if (isPrintPrice)
+	{
+		mdlogstream << "--------------------------" << msg << "--------------------------" << std::endl;
+	}
+}
+
 MdRspImpl::MdRspImpl():isPrintPrice(0)
 {
 	cfgUtil = CfgUtil::getInstance("../cfg/maker_rsh.cfg");
@@ -56,7 +64,7 @@ void MdRspImpl::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThos
 void MdRspImpl::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
-	if (pRspInfo)
+	if (pRspInfo->ErrorID != 0)
 	{
 		std::cout << pRspInfo->ErrorMsg << std::endl;
 	}
@@ -69,7 +77,7 @@ void MdRspImpl::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificI
 void MdRspImpl::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
-	if (pRspInfo)
+	if (pRspInfo->ErrorID != 0)
 	{
 		std::cout << pRspInfo->ErrorMsg << std::endl;
 	}

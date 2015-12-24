@@ -61,13 +61,13 @@ private:
 
 	vector<Case *> vCases;
 	
-	////maker_rsh.cfg配置的参数
+	////maker_rsh.cfg配置的参数, 以下两个参数迁移到cases.cfg
 	///每笔单的手数
-	int volume;
+	//int volume;
 	///挂单数量
-	int holdVolume;
-	///未成交数量
-	int noTradedVolume;
+	//int holdVolume;
+	///未成交数量 废弃
+	///int noTradedVolume;
 
 	///是否开启平仓功能
 	int IsUseClosePosition;
@@ -76,8 +76,8 @@ private:
 	void MainMenu();
 
 	///limitPrice 将市场上的合约推至此价格
-	bool makeLimitPrice(const char* instrumentId, double limitPrice);
-	bool makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp);
+	bool makeLimitPrice(const char* instrumentId, double limitPrice, int volume);
+	bool makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp, int volume);
 
 	///根据涨跌幅算出价格区间
 	///下单允许的最高价，最低价

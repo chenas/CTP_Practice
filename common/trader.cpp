@@ -115,102 +115,111 @@ void Trader::sendOrder(const char* instrumentId, int buySell, int openClose, int
 ///涨停价
 double Trader::getUpperLimitPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return UpperLimitPrice;
 }
 
 ///跌停价
 double Trader::getLowerLimitPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return LowerLimitPrice;
 }
 
 ///最新价
 double Trader::getLastPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return LastPrice;
 }
 
 ///开盘价
 double Trader::getOpenPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return OpenPrice;
-}
-
-///最小变动价
-double Trader::getTickPrice(const char* instrumentId)
-{
-	CThostFtdcQryInstrumentField instrument;
-	memset(&instrument, 0, sizeof(instrument));	
-	strcpy(instrument.InstrumentID, instrumentId);
-	int rtn = tradeApi->ReqQryInstrument(&instrument, ++reqId);;
-	std::cerr << "---->>>发送查询合约请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
-	return PriceTick;
 }
 
 ///昨结算价
 double Trader::getPreSettlementPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return PreSettlementPrice;
 }
 
 ///买一价
 double Trader::getBidPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return BidPrice1;
 }
 
 ///卖一价
 double Trader::getAskPrice(const char* instrumentId)
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
 	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
 	strcpy(QryDepthMarketData.InstrumentID, instrumentId);
 	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
 	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
-	Sleep(500);
+	WaitForSingleObject(g_hEvent,100);
 	return AskPrice1;
+}
+
+///最小变动价
+double Trader::getTickPrice(const char* instrumentId)
+{
+	ResetEvent(g_hEvent);
+	CThostFtdcQryInstrumentField instrument;
+	memset(&instrument, 0, sizeof(instrument));	
+	strcpy(instrument.InstrumentID, instrumentId);
+	int rtn = tradeApi->ReqQryInstrument(&instrument, ++reqId);;
+	std::cerr << "---->>>发送查询合约请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
+	WaitForSingleObject(g_hEvent, INFINITE);
+	return PriceTick;
 }
 
 ///登录
 void Trader::userLogin()
 {
+	ResetEvent(g_hEvent);
 	CThostFtdcReqUserLoginField loginField;
 	memset(&loginField,0,sizeof(loginField));
 	strcpy(loginField.BrokerID, brokerId.c_str());
@@ -225,7 +234,7 @@ void Trader::userLogin()
 ///结算结果确认
 void Trader::settleComfirm()
 {
-
+	ResetEvent(g_hEvent);
 	CThostFtdcSettlementInfoConfirmField SettlementInfoConfirm;
 	strcpy(SettlementInfoConfirm.BrokerID, brokerId.c_str());
 	strcpy(SettlementInfoConfirm.InvestorID, userId.c_str());
@@ -285,7 +294,7 @@ int Trader::qryOrder(const char* instrumentId)
 }
 
 ///查询持仓，然后平仓
-void Trader::qryPosition()
+void Trader::qryPosition(vector<PriceData *> vData)
 {	
 	ResetEvent(g_hEvent);
 	CThostFtdcQryInvestorPositionField QryInvestorPosition;
@@ -299,19 +308,32 @@ void Trader::qryPosition()
 	//Position.size()
 	for (int i=0; i<Position.size(); i++)
 	{
+		double closePrice = 0.0;
+		int vSize = vData.size();
+		for (int j=0; j<vSize; j++)
+		{
+			if (vData[j]->InstrumentId == Position[i].InstrumentID)
+			{
+				closePrice = vData[j]->CurPrice;
+			}
+		}
+		if (closePrice == 0.0)
+		{
+			closePrice = getLowerLimitPrice(Position[i].InstrumentID.c_str());
+			Sleep(1000);
+		}
 		/// Direction;  //2、多，3、空
 		///buySell 买卖方向 0.买  1.卖
 		int buySell = (Position[i].Direction == 2 ? 1:0);
 		///openClose 开平标志  0.开仓   1.平仓  3.平今  4.平昨
 		if (Position[i].Position > 0)  ///平今
 		{
-			sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, Position[i].Position, getLowerLimitPrice(Position[i].InstrumentID.c_str()));
+			sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, Position[i].Position, closePrice);
 		}
 		if (Position[i].YdPosition > 0)  ///平昨
 		{
-			sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, Position[i].YdPosition, getLowerLimitPrice(Position[i].InstrumentID.c_str()));
+			sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, Position[i].YdPosition, closePrice);
 		}
-		Sleep(100);
 	}
 	std::cout << "--------平仓完成--------" << std::endl;
 }

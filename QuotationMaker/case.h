@@ -24,6 +24,8 @@ public:
 	void setChanges(string change);
 	void setMaxVolume(string maxVolume);
 	void setFrequencys(string frequency);
+	void setVolume(string volume);
+	void SetHoldVolume(string holdVolume);
 
 	void setPriceData();
 
@@ -40,6 +42,10 @@ private:
 	vector<int> vChange;
 	vector<int> vMaxVolume;
 	vector<int> vFrequency;
+	///每笔单的手数
+	vector<int> vVolume;
+	///每笔单的手数，作为挂单
+	vector<int> vHoldVolume;
 
 	map<int, vector<PriceData *>> mFunctionWithData;
 
@@ -48,8 +54,10 @@ private:
 	double findLowestPrice(const char* instrumentId, double currentPrice, double change);
 	double findHighestPrice(const char* instrumentId, double currentPrice, double change);
 
-	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, bool isUp, int timeout);
-	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, int timeout, int maxVolume, int frequency);
+	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, 
+		bool isUp, int timeout, int volume, int holdVolume);
+	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, 
+		int timeout, int maxVolume, int frequency, int volume, int holdVolume);
 
 };
 

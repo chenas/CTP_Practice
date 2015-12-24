@@ -10,9 +10,9 @@ Cases::Cases()
 	pTrader = new Trader();
 	pMarketUtil = new MarketUtil();
 	getCfg = CfgUtil::getInstance(cfgFilePath);
-	volume = StringUtil::stringToInt(getCfg->getPara("Volume"));
-	holdVolume = StringUtil::stringToInt(getCfg->getPara("HoldVolume"));
-	noTradedVolume = StringUtil::stringToInt(getCfg->getPara("NoTradedVolume"));
+	//volume = StringUtil::stringToInt(getCfg->getPara("Volume"));
+	//holdVolume = StringUtil::stringToInt(getCfg->getPara("HoldVolume"));
+	//noTradedVolume = StringUtil::stringToInt(getCfg->getPara("NoTradedVolume"));
 	IsUseClosePosition = getCfg->getParaInt("IsUseClosePosition");
 	pCaseFactory = new CaseFactory();
 	initData();
@@ -25,6 +25,9 @@ void Cases::run()
 	for (int i=0; i<vCases.size(); i++)
 	{
 		Common::record2File((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " begin").c_str());
+		///行情开始标记
+		pMarketUtil->writeSeparator((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " begin").c_str());
+		vCases[i]->show();
 		map<int, vector<PriceData *>> mFunctionWithData = vCases[i]->getFunctionWithData();
 		map<int, vector<PriceData *>>::iterator mit;
 		for (mit = mFunctionWithData.begin(); mit != mFunctionWithData.end(); mit++)
@@ -69,20 +72,25 @@ void Cases::run()
 			}
 		}
 		Common::record2File((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " end").c_str());
-
+		pMarketUtil->writeSeparator((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " end").c_str());
+		///撤单
 		pTrader->orderAction();
+
+		///查询持仓，平仓
+		if (IsUseClosePosition == 1)
+		{
+			for (mit = mFunctionWithData.begin(); mit != mFunctionWithData.end(); mit++)
+			{
+				pTrader->qryPosition((*mit).second);
+			}			
+		}	
 	}
 	pMarketUtil->closeMdLog();
-	
-	///查询持仓，平仓
-	if (IsUseClosePosition)
-	{
-		pTrader->qryPosition();
-	}	
+
 }
 
 ///将最新价提高到指定价格
-bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice)
+bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, int volume)
 {
 	pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
 	Sleep(100);
@@ -95,7 +103,7 @@ bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice)
 }
 
 ///将最新价提高到指定价格
-bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp)
+bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp, int volume)
 {
 	if (isUp)
 	{
@@ -141,6 +149,8 @@ void Cases::initData()
 		w >> c->Change;
 		w >> c->MaxVolume;
 		w >> c->Frequency;
+		w >> c->Volume;
+		w >> c->HoldVolume;
 
 		std::cout << "case " << c->ID << std::endl;
 		std::cout << "ProductOrInstrument: " << c->ProductOrInstrument << std::endl;
@@ -151,11 +161,11 @@ void Cases::initData()
 
 	std::cout << "---->>>初始化数据结束" << std::endl;
 
-	vector<Case *>::iterator cit;
-	for (cit=vCases.begin(); cit!=vCases.end(); cit++)
-	{
-		(*cit)->show();
-	}
+	//vector<Case *>::iterator cit;
+	//for (cit=vCases.begin(); cit!=vCases.end(); cit++)
+	//{
+	//	(*cit)->show();
+	//}
 	std::cout << "-----------------------------" << std::endl;
 
 	//pTrader->qryPosition();
@@ -181,16 +191,16 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 		{
 			data.erase(data.begin() + i);  ///删除没有价格的合约
 		}
-		while(!makeLimitPrice(data[i]->InstrumentId, price, isUp))  ///待增加超时机制 **********
+		while(!makeLimitPrice(data[i]->InstrumentId, price, isUp, data[i]->Volume))  ///待增加超时机制 **********
 		{
 		}	
 		if (isUp)
 		{
-			pTrader->sendOrder(data[i]->InstrumentId, 0, 0, holdVolume, data[i]->HighestPrice);
+			pTrader->sendOrder(data[i]->InstrumentId, 0, 0, data[i]->HoldVolume, data[i]->HighestPrice);
 		}
 		else
 		{
-			pTrader->sendOrder(data[i]->InstrumentId, 1, 0, holdVolume, data[i]->LowestPrice);
+			pTrader->sendOrder(data[i]->InstrumentId, 1, 0, data[i]->HoldVolume, data[i]->LowestPrice);
 		}
 	}
 	DWORD dwStart = GetTickCount(); //取windows启动到现在的流逝时间(毫秒)
@@ -207,13 +217,13 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
 				Sleep(500);
 				std::cout << "--------"<< BidPrice1 <<"----------"<< bidPrice << "--------" << data[i]->HighestPrice << "-----------" << data[i]->InstrumentId << std::endl;
-				if ((noTradedVolume <= _noTraded) && (bidPrice == data[i]->HighestPrice))
+				if ((data[i]->HoldVolume <= _noTraded) && (bidPrice == data[i]->HighestPrice))
 				{
 					continue;
 				}
 				else
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, holdVolume, data[i]->HighestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, data[i]->HoldVolume, data[i]->HighestPrice);
 
 				}
 			}
@@ -221,16 +231,16 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 			{
 				double askPrice = 0.0;
 				askPrice = pTrader->getAskPrice(data[i]->InstrumentId);				
-				std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
+				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
 				Sleep(100);
 				std::cout << "--------"<< AskPrice1 <<"----------"<< askPrice << "--------" << data[i]->LowestPrice << "-----------" << data[i]->InstrumentId << std::endl;
-				if ((noTradedVolume <= _noTraded) && (askPrice == data[i]->LowestPrice))
+				if ((data[i]->HoldVolume <= _noTraded) && (askPrice == data[i]->LowestPrice))
 				{
 					continue;
 				}
 				else 
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, holdVolume, data[i]->LowestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, data[i]->HoldVolume, data[i]->LowestPrice);
 
 				}
 			}
@@ -257,16 +267,16 @@ void Cases::holdChane(vector<PriceData *> data, bool isUp)
 					price = data[i]->HighestPrice;
 				else
 					price = data[i]->LowestPrice;
-				while (!makeLimitPrice(data[i]->InstrumentId, price))
+				while (!makeLimitPrice(data[i]->InstrumentId, price, data[i]->Volume))
 				{
 				}	
 				if (isUp)
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, holdVolume, data[i]->HighestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, data[i]->HoldVolume, data[i]->HighestPrice);
 				}
 				else
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, holdVolume, data[i]->LowestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, data[i]->HoldVolume, data[i]->LowestPrice);
 				}
 			}
 		}
@@ -275,31 +285,31 @@ void Cases::holdChane(vector<PriceData *> data, bool isUp)
 			for (int i=0; i<dataSize; i++)
 			{
 				double lastPrice = pTrader->getLastPrice(data[i]->InstrumentId);
-				while (!makeLimitPrice(data[i]->InstrumentId, data[i]->HighestPrice))
+				while (!makeLimitPrice(data[i]->InstrumentId, data[i]->HighestPrice, data[i]->Volume))
 				{}
 
 				if (isUp)
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, holdVolume, data[i]->HighestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 0, 0, data[i]->HoldVolume, data[i]->HighestPrice);
 				}
 				else
 				{
-					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, holdVolume, data[i]->LowestPrice);
+					pTrader->sendOrder(data[i]->InstrumentId, 1, 0, data[i]->HoldVolume, data[i]->LowestPrice);
 				}
 			}
 		}
 	}
 	else
 	{
-		HANDLE  lphandles[200];
+		HANDLE  lphandles[500];
 		for (int i=0; i<dataSize; i++)
 		{
 			Data4Thread *pData = new Data4Thread;
 			pData->data = data[i];
 			pData->pTrader = pTrader;
-			pData->volume = volume;
+			pData->volume = data[i]->Volume;
 			pData->isUp = isUp;
-			pData->holdVolume = holdVolume;
+			pData->holdVolume = data[i]->HoldVolume;
 			lphandles[i] = CreateThread(NULL,0,holdChangeWithOne,(LPVOID)pData,0,NULL);
 			pData = NULL;
 		}
@@ -340,7 +350,7 @@ DWORD WINAPI holdChangeWithOne(LPVOID pParam)
 	for (int i=1; i<= data->TickCount; i++)
 	{
 		//if (dwUsed >= (timeEachTick * data->TickCount))
-			//break;
+		//break;
 		if (pData->isUp)
 		{
 			double inputPrice = data->CurPrice + (i * data->PriceTick);
@@ -382,7 +392,7 @@ void Cases::sendOrderRandom(vector<PriceData *> data)
 	double price = 0.0;
 	int _volume = 1;
 	int buyOrSell = 0;
-	
+
 	while(dwUsed <= (data[0]->TimeOut * 1000))
 	{
 		dataIndex = Random(data.size());

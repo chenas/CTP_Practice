@@ -16,6 +16,8 @@ struct CaseCfg
 	string Change;
 	string MaxVolume;
 	string Frequency;
+	string Volume;
+	string HoldVolume;
 };
 
 struct PriceData
@@ -30,6 +32,8 @@ struct PriceData
 	int MaxVolume;
 	int Frequency;
 	double Change;
+	int Volume;
+	int HoldVolume;
 };
 
 #endif

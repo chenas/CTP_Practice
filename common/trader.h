@@ -101,7 +101,7 @@ public:
 	int qryOrder(const char* instrumentId);
 
 	///²é³Ö²Ö
-	void qryPosition();
+	void qryPosition(vector<PriceData *> vData);
 
 
 private:

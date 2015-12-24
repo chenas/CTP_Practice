@@ -12,7 +12,7 @@ Case::Case(Trader* pTrader)
 	map<int, vector<PriceData *>>().swap(mFunctionWithData);
 }
 
-map<int, vector<PriceData *>> Case::getFunctionWithData()
+map< int, vector<PriceData *> > Case::getFunctionWithData()
 {
 	return mFunctionWithData;
 }
@@ -30,26 +30,113 @@ void Case::setFunctions(string _case)
 void Case::setChanges(string change)
 {
 	StringUtil::stringToVector(change, separator, vChange);
+
+	int vFunctionSize = vFunction.size();
+	int paraSize = vChange.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vChange.push_back(vChange[0]);
+		}
+	}
 }
 
 void Case::setFrequencys(string frequency)
 {
 	StringUtil::stringToVector(frequency, separator, vFrequency);
+	
+	int vFunctionSize = vFunction.size();
+	int paraSize = vFrequency.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vFrequency.push_back(vFrequency[0]);
+		}
+	}
 }
 
 void Case::setInstruments(string productOrInstrument)
 {
 	StringUtil::stringToVector(productOrInstrument, separator, vProductOrInstrument);
+	
+	int vFunctionSize = vFunction.size();
+	int paraSize = vProductOrInstrument.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vProductOrInstrument.push_back(vProductOrInstrument[0]);
+		}
+	}
 }
 
 void Case::setMaxVolume(string maxVolume)
 {
 	StringUtil::stringToVector(maxVolume, separator, vMaxVolume);
+
+	int vFunctionSize = vFunction.size();
+	int paraSize = vMaxVolume.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vMaxVolume.push_back(vMaxVolume[0]);
+		}
+	}
 }
 
 void Case::setTimeouts(string timeout)
 {
 	StringUtil::stringToVector(timeout, separator, vTimeout);
+
+	int vFunctionSize = vFunction.size();
+	int paraSize = vTimeout.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vTimeout.push_back(vTimeout[0]);
+		}
+	}
+}
+
+void Case::setVolume(string volume)
+{
+	StringUtil::stringToVector(volume, separator, vVolume);
+
+	int vFunctionSize = vFunction.size();
+	int paraSize = vVolume.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vVolume.push_back(vVolume[0]);
+		}
+	}
+}
+
+void Case::SetHoldVolume(string holdVolume)
+{
+	StringUtil::stringToVector(holdVolume, separator, vHoldVolume);
+
+	int vFunctionSize = vFunction.size();
+	int paraSize = vHoldVolume.size();	
+	if (vFunctionSize > 1 && (paraSize > 0 && paraSize < vFunctionSize))
+	{
+		int diff = vFunctionSize - paraSize;
+		for (int i=1; i<=diff; i++)
+		{
+			vHoldVolume.push_back(vHoldVolume[0]);
+		}
+	}
 }
 
 void Case::setPriceData()
@@ -67,6 +154,8 @@ void Case::setPriceData()
 		int change = vChange[index];
 		int maxVolume = vMaxVolume[index];
 		int frequency = vFrequency[index];
+		int volume = vVolume[index];
+		int holdVolume = vHoldVolume[index];
 
 		StringUtil::stringToVector(POI, ",", vTemp);
 		for(int i=0; i<vTemp.size(); i++)
@@ -81,7 +170,8 @@ void Case::setPriceData()
 			for (int i=0; i<vTempInstrument.size(); i++)
 			{
 				double curPrice = pTrader->getLastPrice(vTempInstrument[i].c_str());
-				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, 100, true, timeout));
+				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, 100, true, timeout,volume, holdVolume));
+				Sleep(1000);
 			}
 			break;
 
@@ -90,7 +180,8 @@ void Case::setPriceData()
 			for (int i=0; i<vTempInstrument.size(); i++)
 			{
 				double curPrice = pTrader->getLastPrice(vTempInstrument[i].c_str());
-				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, 100, false, timeout));
+				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, 100, false, timeout,volume, holdVolume));
+				Sleep(1000);
 			}
 			break;
 
@@ -99,7 +190,8 @@ void Case::setPriceData()
 			for (int i=0; i<vTempInstrument.size(); i++)
 			{
 				double curPrice = pTrader->getLastPrice(vTempInstrument[i].c_str());
-				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, true, timeout));
+				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, true, timeout,volume, holdVolume));
+				Sleep(1000);
 			}
 			break;
 
@@ -108,7 +200,8 @@ void Case::setPriceData()
 			for (int i=0; i<vTempInstrument.size(); i++)
 			{
 				double curPrice = pTrader->getLastPrice(vTempInstrument[i].c_str());
-				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, false, timeout));
+				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, false, timeout,volume, holdVolume));
+				Sleep(1000);
 			}
 			break;
 			
@@ -117,7 +210,8 @@ void Case::setPriceData()
 			for (int i=0; i<vTempInstrument.size(); i++)
 			{
 				double curPrice = pTrader->getLastPrice(vTempInstrument[i].c_str());
-				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, timeout, maxVolume, frequency));
+				data.push_back(initPriceData(vTempInstrument[i].c_str(), curPrice, change, timeout, maxVolume, frequency,volume, holdVolume));
+				Sleep(1000);
 			}
 			break;
 
@@ -132,16 +226,16 @@ void Case::setPriceData()
 	}
 }
 
+///分解后的case写入到文件
 void Case::show()
 {
-	
-	std::ofstream o_file("../cfg/log_case.txt",std::ios::app);			
+	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
 	map<int, vector<PriceData*>>::iterator mit;
 	o_file << TimeUtil::getTimeNow() << std::endl;
 	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
 	{
 		//std::cout << "NO: " << ID << " Function: " << mit->first << " ";
-		o_file << "NO: " << ID << " Function: " << mit->first << " ";
+		o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
 		vector<PriceData*> data = mit->second;
 		vector<PriceData*>::iterator it;
 		for (it = data.begin(); it != data.end(); it++)
@@ -149,22 +243,23 @@ void Case::show()
 			//std::cout << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
 				//<< " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
 			o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
-				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
+				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
+				<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
+				<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
 		}
 	}
 	o_file << std::endl;
 	o_file.close();
 }
 
-
 ///找到最低价
 double Case::findLowestPrice(const char* instrumentId, double currentPrice, double change)
 {
+	double lowerPrice = pTrader->getLowerLimitPrice(instrumentId);
 	if (change == 100)
 	{
-		return pTrader->getLowerLimitPrice(instrumentId);
+		return LowerLimitPrice;
 	}
-	double lowerPrice = pTrader->getLowerLimitPrice(instrumentId);
 	double priceTick = PriceTick;
 	double price = 0.0;
 	double changePrice = currentPrice * change/100;
@@ -188,7 +283,7 @@ double Case::findLowestPrice(const char* instrumentId, double currentPrice, doub
 double Case::findHighestPrice(const char* instrumentId, double currentPrice, double change)
 {
 	double upperPrice = pTrader->getUpperLimitPrice(instrumentId);
-	Sleep(1000);
+
 	if (change == 100)
 	{
 		return upperPrice;
@@ -213,8 +308,8 @@ double Case::findHighestPrice(const char* instrumentId, double currentPrice, dou
 	return price;
 }
 
-
-PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, double change, bool isUp, int timeout)
+PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, double change,
+	bool isUp, int timeout, int volume, int holdVolume)
 {
 	if (currentPrice == 0.0)
 		return 0;
@@ -225,28 +320,26 @@ PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, do
 	if (isUp)
 	{
 		data->HighestPrice = findHighestPrice(instrumemtId, currentPrice, change);
-		Sleep(300);
 		data->TickCount = ceil((data->HighestPrice - currentPrice)/PriceTick); ///向上取整
-		
 	}
 	else
 	{
 		data->LowestPrice = findLowestPrice(instrumemtId, currentPrice, change);
-		Sleep(300);
 		data->TickCount = ceil((currentPrice - data->LowestPrice)/PriceTick);
-		
 	}
 	
 	data->PriceTick = PriceTick;
-	data->CurPrice = currentPrice;
+	data->CurPrice = LastPrice;
 	strcpy(data->InstrumentId, instrumemtId);
 	data->TimeOut = timeout;
 	data->Change = change;
-
+	data->Volume = volume;
+	data->HoldVolume = holdVolume;
 	return data;
 }
 
-PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, double change, int timeout, int maxVolume, int frequency)
+PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, double change, 
+	int timeout, int maxVolume, int frequency, int volume, int holdVolume)
 {
 	if (currentPrice == 0.0)
 		return 0;
@@ -266,6 +359,8 @@ PriceData* Case::initPriceData(const char* instrumemtId, double currentPrice, do
 	data->Change = change;
 	data->MaxVolume = maxVolume;
 	data->Frequency = frequency;
+	data->Volume = volume;
+	data->HoldVolume = holdVolume;
 
 	return data;
 }
@@ -278,17 +373,20 @@ CaseFactory::CaseFactory()
 {
 }
 
-
+///创建case实例
 Case* CaseFactory::createCase(Trader* pTrader, CaseCfg* caseCfg)
 {
 	Case* c = new Case(pTrader);
-	c->setChanges(caseCfg->Change);
-	c->setFunctions(caseCfg->Function);
-	c->setFrequencys(caseCfg->Frequency);
 	c->setID(caseCfg->ID);
+	c->setFunctions(caseCfg->Function);
+	c->setChanges(caseCfg->Change);
+	c->setFrequencys(caseCfg->Frequency);
 	c->setInstruments(caseCfg->ProductOrInstrument);
 	c->setMaxVolume(caseCfg->MaxVolume);
 	c->setTimeouts(caseCfg->Timeout);
+	c->setVolume(caseCfg->Volume);
+	c->SetHoldVolume(caseCfg->HoldVolume);
+
 	c->setPriceData();
 	return c;
 }

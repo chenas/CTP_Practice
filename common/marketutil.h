@@ -21,6 +21,7 @@ public:
 	///打开记录行情数据文件
 	bool openMdLog();
 	bool closeMdLog();
+	void writeSeparator(const char* msg);
 
 private:
 
