@@ -38,7 +38,7 @@ void Case::setChanges(string change)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vChange.push_back(vChange[0]);
+			vChange.push_back(vChange[paraSize-1]);
 		}
 	}
 }
@@ -54,7 +54,7 @@ void Case::setFrequencys(string frequency)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vFrequency.push_back(vFrequency[0]);
+			vFrequency.push_back(vFrequency[paraSize-1]);
 		}
 	}
 }
@@ -70,7 +70,7 @@ void Case::setInstruments(string productOrInstrument)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vProductOrInstrument.push_back(vProductOrInstrument[0]);
+			vProductOrInstrument.push_back(vProductOrInstrument[paraSize-1]);
 		}
 	}
 }
@@ -86,7 +86,7 @@ void Case::setMaxVolume(string maxVolume)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vMaxVolume.push_back(vMaxVolume[0]);
+			vMaxVolume.push_back(vMaxVolume[paraSize-1]);
 		}
 	}
 }
@@ -102,7 +102,7 @@ void Case::setTimeouts(string timeout)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vTimeout.push_back(vTimeout[0]);
+			vTimeout.push_back(vTimeout[paraSize-1]);
 		}
 	}
 }
@@ -118,7 +118,7 @@ void Case::setVolume(string volume)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vVolume.push_back(vVolume[0]);
+			vVolume.push_back(vVolume[paraSize-1]);
 		}
 	}
 }
@@ -134,7 +134,7 @@ void Case::SetHoldVolume(string holdVolume)
 		int diff = vFunctionSize - paraSize;
 		for (int i=1; i<=diff; i++)
 		{
-			vHoldVolume.push_back(vHoldVolume[0]);
+			vHoldVolume.push_back(vHoldVolume[paraSize-1]);
 		}
 	}
 }
