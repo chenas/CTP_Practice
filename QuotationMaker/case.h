@@ -12,6 +12,9 @@
 ///改成builder模式
 
 extern set<string> AllInstrumentId;
+extern map< string, double > AllInstrumentIdWithPriceTick;
+//深度行情
+extern std::map< std::string, CThostFtdcDepthMarketDataField > DepthMarketDataField;
 
 class Case
 {
@@ -51,15 +54,21 @@ private:
 	map<int, vector<PriceData *>> mFunctionWithData;
 
 	Trader* pTrader;
-
+	
 	double findLowestPrice(const char* instrumentId, double currentPrice, double change);
+	double findLowestPrice(double lowerLimitPrice, double currentPrice, double change, double priceTick);
 	double findHighestPrice(const char* instrumentId, double currentPrice, double change);
-
+	double findHighestPrice(double upperLimitPrice, double currentPrice, double change, double priceTick);
+	
 	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, 
 		bool isUp, int timeout, int volume, int holdVolume);
+	PriceData* initPriceData(CThostFtdcDepthMarketDataField DepthMarketDataField, double change,
+		double priceTick, bool isUp, int timeout, int volume, int holdVolume);
+
 	PriceData* initPriceData(const char* instrumemtId, double currentPrice, double change, 
 		int timeout, int maxVolume, int frequency, int volume, int holdVolume);
-
+	PriceData* initPriceData(CThostFtdcDepthMarketDataField DepthMarketDataField, double change, 
+		double priceTick, int timeout, int maxVolume, int frequency, int volume, int holdVolume);
 };
 
 class CaseFactory

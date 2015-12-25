@@ -54,6 +54,9 @@
     <ClCompile Include="..\common\marketutil.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="casebuilder.cpp">
+      <Filter>case</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\apiImpl\traderspimpl.h">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="..\common\DataDefine.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="casebuilder.h">
+      <Filter>case</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

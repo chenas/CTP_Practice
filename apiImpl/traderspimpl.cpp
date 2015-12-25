@@ -43,6 +43,7 @@ TThostFtdcPriceType	AskPrice1 = 0;
 
 ///整个市场的合约
 std::set<std::string> AllInstrumentId;
+std::map< std::string, double > AllInstrumentIdWithPriceTick;
 
 ///未成交委托
 std::vector<OrderActionPackge> NoTradedOrder;
@@ -51,6 +52,8 @@ int NoTradedNumber = 0;
 ///持仓
 std::vector<PositionActionPackage> Position;
 
+//深度行情
+std::map< std::string, CThostFtdcDepthMarketDataField > DepthMarketDataField;
 
 void TradeRspImpl::OnFrontConnected()
 {
@@ -248,7 +251,7 @@ void TradeRspImpl::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pIn
 void TradeRspImpl::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	//std::cerr << "--->>>" << __FUNCTION__ <<std::endl;
-	std::cerr << "InstrumentID: " << pDepthMarketData->InstrumentID << " UpdateTime: " << pDepthMarketData->UpdateTime << std::endl;
+	//std::cerr << "InstrumentID: " << pDepthMarketData->InstrumentID << " UpdateTime: " << pDepthMarketData->UpdateTime << std::endl;
 	//std::cerr << " 涨停板： " << pDepthMarketData->UpperLimitPrice << " 跌停板： " << pDepthMarketData->LowerLimitPrice << std::endl;
 
 	UpperLimitPrice = pDepthMarketData->UpperLimitPrice;
@@ -268,7 +271,17 @@ void TradeRspImpl::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDept
 	///申卖价一
 	AskPrice1 = pDepthMarketData->AskPrice1;
 
-	//std::cout << pDepthMarketData->BidPrice1 << "   AskPrice1" << pDepthMarketData->AskPrice1 << std::endl;
+	std::string key = pDepthMarketData->InstrumentID;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(key);
+	if (mit == DepthMarketDataField.end())
+	{
+		DepthMarketDataField.insert(make_pair(key, *pDepthMarketData));
+	}
+	else
+	{
+		//mit->second = *pDepthMarketData;
+	}
+	
 	if(bIsLast) 
 	{
 		SetEvent(g_hEvent);
@@ -429,6 +442,12 @@ void TradeRspImpl::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CT
 	if ( pInstrument->IsTrading == 1)
 	{
 		AllInstrumentId.insert(pInstrument->InstrumentID);
+		std::string key = pInstrument->InstrumentID;
+		std::map< std::string, double >::iterator mit = AllInstrumentIdWithPriceTick.find(key);
+		if (mit == AllInstrumentIdWithPriceTick.end())
+		{
+			AllInstrumentIdWithPriceTick.insert(make_pair(key, pInstrument->PriceTick));
+		}
 	}	
 	if(pInstrument->IsTrading == 0)
 		std::cerr << "isTrading  " << pInstrument->IsTrading << std::endl;

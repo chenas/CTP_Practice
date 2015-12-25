@@ -94,6 +94,9 @@ public:
 	///卖一价
 	double getAskPrice(const char* instrumentId);
 
+	///查询整个市场深度行情
+	void qryDepthMarketData();
+
 	///撤单
 	void orderAction();
 

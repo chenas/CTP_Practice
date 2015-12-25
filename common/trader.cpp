@@ -34,7 +34,7 @@ Trader::Trader()
 	WaitForSingleObject(g_hEvent, INFINITE);
 
 	userLogin();
-	
+
 	settleComfirm();
 
 	CThostFtdcQryInstrumentField instrument;
@@ -42,8 +42,8 @@ Trader::Trader()
 	tradeApi->ReqQryInstrument(&instrument, ++reqId);
 	WaitForSingleObject(g_hEvent,INFINITE);
 
-	std::cerr << "市场总合约个数：" << AllInstrumentId.size() << "  初始化中..." << std::endl;
-	
+	std::cerr << "市场总合约个数：" << AllInstrumentId.size() << "  开始初始化..." << std::endl;
+	Sleep(1000);
 }
 
 Trader::~Trader()
@@ -216,6 +216,17 @@ double Trader::getTickPrice(const char* instrumentId)
 	return PriceTick;
 }
 
+///查询整个市场深度行情
+void Trader::qryDepthMarketData()
+{
+	ResetEvent(g_hEvent);
+	CThostFtdcQryDepthMarketDataField QryDepthMarketData;
+	memset(&QryDepthMarketData, 0, sizeof(QryDepthMarketData));
+	int rtn = tradeApi->ReqQryDepthMarketData(&QryDepthMarketData, ++reqId);
+	std::cerr << "---->>>发送查询深度行情请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
+	WaitForSingleObject(g_hEvent,INFINITE);
+}
+
 ///登录
 void Trader::userLogin()
 {
@@ -271,7 +282,7 @@ void Trader::orderAction()
 		int rtn = tradeApi->ReqOrderAction(&order, ++reqId);
 		std::cerr << "---->>>发送撤单请求" << ((rtn == 0) ? "成功":"失败") << std::endl;
 	}
-	
+
 	vector<OrderActionPackge>().swap(NoTradedOrder);
 	std::cout << "--------撤单完成--------" << std::endl;
 
@@ -280,7 +291,7 @@ void Trader::orderAction()
 ///查询挂单数量
 int Trader::qryOrder(const char* instrumentId)
 {
-	
+
 	ResetEvent(g_hEvent);
 	CThostFtdcQryOrderField order;
 	strcpy(order.BrokerID, brokerId.c_str());

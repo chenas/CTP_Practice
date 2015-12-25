@@ -22,7 +22,7 @@ void Cases::run()
 {
 	Sleep(300);
 	pMarketUtil->openMdLog();
-	for (int i=0; i<vCases.size(); i++)
+	for (unsigned int i=0; i<vCases.size(); i++)
 	{
 		Common::record2File((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " begin").c_str());
 		///行情开始标记
@@ -38,31 +38,31 @@ void Cases::run()
 				pMarketUtil->subcribeMarketData((*mit).second);
 				makeLimit((*mit).second, true);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
-				Sleep(1000);
+				Sleep(100);
 				break;
 			case 2:
 				pMarketUtil->subcribeMarketData((*mit).second);
 				makeLimit((*mit).second, false);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
-				Sleep(1000);
+				Sleep(100);
 				break;
 			case 3:
 				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, true);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
-				Sleep(1000);
+				Sleep(100);
 				break;
 			case 4:
 				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, false);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
-				Sleep(1000);
+				Sleep(100);
 				break;
 			case 5:
 				pMarketUtil->subcribeMarketData((*mit).second);
 				sendOrderRandom((*mit).second);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
-				Sleep(1000);
+				Sleep(100);
 				break;
 			case -1:
 				break;
@@ -93,7 +93,7 @@ void Cases::run()
 bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, int volume)
 {
 	pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
-	Sleep(100);
+	Sleep(10);
 	pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
 	Sleep(600);
 	if (limitPrice == pTrader->getLastPrice(instrumentId))
@@ -105,25 +105,28 @@ bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, int volu
 ///将最新价提高到指定价格
 bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp, int volume)
 {
+	pTrader->getLastPrice(instrumentId);
 	if (isUp)
 	{
 		pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
 		pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
+		if (limitPrice == UpperLimitPrice)
+		{
+			return true;
+		}
 	}
 	else
 	{
 		pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
 		pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
+		if (limitPrice == LowerLimitPrice)
+		{
+			return true;
+		}
 	}
-	Sleep(100);
-	double _lastPrice = pTrader->getLastPrice(instrumentId);
-	Sleep(400);
-	if (limitPrice == _lastPrice)
-	{
-		return true;
-	}
-	else
-		return false;
+
+	//Sleep(1000);
+	return false;
 }
 
 ///初始化应用数据
@@ -180,7 +183,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 		return;
 	DWORD dwUsed = 0; //消耗的时间
 	double price = 0;
-	for (int i=0; i<data.size(); i++)
+	for (unsigned int i=0; i<data.size(); i++)
 	{
 		if (isUp)
 			price = data[i]->HighestPrice;
@@ -191,6 +194,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 		{
 			data.erase(data.begin() + i);  ///删除没有价格的合约
 		}
+
 		while(!makeLimitPrice(data[i]->InstrumentId, price, isUp, data[i]->Volume))  ///待增加超时机制 **********
 		{
 		}	
@@ -207,15 +211,16 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 
 	while (dwUsed <= (data[0]->TimeOut * 1000))
 	{
-		for (int i=0; i<data.size(); i++)
+		for (unsigned int i=0; i<data.size(); i++)
 		{
 			NoTradedNumber =0;  //重置
 			int _noTraded = pTrader->qryOrder(data[i]->InstrumentId);
+			Sleep(1000);
 			if (isUp)
 			{
 				double bidPrice = pTrader->getBidPrice(data[i]->InstrumentId);  ///买一价				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				Sleep(500);
+				Sleep(1000);
 				std::cout << "--------"<< BidPrice1 <<"----------"<< bidPrice << "--------" << data[i]->HighestPrice << "-----------" << data[i]->InstrumentId << std::endl;
 				if ((data[i]->HoldVolume <= _noTraded) && (bidPrice == data[i]->HighestPrice))
 				{
@@ -232,7 +237,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 				double askPrice = 0.0;
 				askPrice = pTrader->getAskPrice(data[i]->InstrumentId);				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				Sleep(100);
+				Sleep(1000);
 				std::cout << "--------"<< AskPrice1 <<"----------"<< askPrice << "--------" << data[i]->LowestPrice << "-----------" << data[i]->InstrumentId << std::endl;
 				if ((data[i]->HoldVolume <= _noTraded) && (askPrice == data[i]->LowestPrice))
 				{
@@ -261,7 +266,7 @@ void Cases::holdChane(vector<PriceData *> data, bool isUp)
 	{
 		if (data[0]->Change = 100)//涨停/跌停
 		{
-			for (int i=0; i<data.size(); i++)
+			for (unsigned int i=0; i<data.size(); i++)
 			{
 				if (isUp)
 					price = data[i]->HighestPrice;

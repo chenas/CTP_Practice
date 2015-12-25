@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>  //find 函数
 #include <vector>
+#include <map>
 #include "../ctpapi/ThostFtdcTraderApi.h"
 
 ///用于撤单
