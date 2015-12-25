@@ -9,6 +9,7 @@
 #include "../common/trader.h"
 #include "../common/marketutil.h"
 
+///改成builder模式
 
 extern set<string> AllInstrumentId;
 
