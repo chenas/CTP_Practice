@@ -30,6 +30,7 @@ extern TThostFtdcPriceType	AskPrice1;
 ///未成交的挂单手数 
 extern int NoTradedNumber;
 
+
 #define Random(X) (rand()%X)
 
 

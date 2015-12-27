@@ -339,11 +339,29 @@ void Trader::qryPosition(vector<PriceData *> vData)
 		///openClose 开平标志  0.开仓   1.平仓  3.平今  4.平昨
 		if (Position[i].Position > 0)  ///平今
 		{
-			sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, Position[i].Position, closePrice);
+			int temp = Position[i].Position / 100;
+			int leftVolume = Position[i].Position % 100;
+			for (int k=0; k<temp; k++)
+			{
+				sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, 100, closePrice);
+			}
+			if (leftVolume > 0)
+			{
+				sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, leftVolume, closePrice);
+			}			
 		}
 		if (Position[i].YdPosition > 0)  ///平昨
 		{
-			sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, Position[i].YdPosition, closePrice);
+			int temp = Position[i].YdPosition / 100;
+			int leftVolume = Position[i].YdPosition % 100;
+			for (int k=0; k<temp; k++)
+			{
+				sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, 100, closePrice);
+			}
+			if (leftVolume > 0)
+			{
+				sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, leftVolume, closePrice);
+			}		
 		}
 	}
 	std::cout << "--------平仓完成--------" << std::endl;

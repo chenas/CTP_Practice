@@ -159,7 +159,7 @@ void Case::setPriceData()
 		int holdVolume = vHoldVolume[index];
 
 		StringUtil::stringToVector(POI, ",", vTemp);
-		for(int i=0; i<vTemp.size(); i++)
+		for(unsigned int i=0; i<vTemp.size(); i++)
 		{
 			Common::findInstruments(vTemp[i], AllInstrumentId, vTempInstrument);
 		}
@@ -168,7 +168,7 @@ void Case::setPriceData()
 		{
 		case 1:  //保持涨停
 
-			for (int i=0; i<vTempInstrument.size(); i++)
+			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
 				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
@@ -191,7 +191,7 @@ void Case::setPriceData()
 
 		case 2:  //保持跌停
 
-			for (int i=0; i<vTempInstrument.size(); i++)
+			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
 				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
@@ -214,7 +214,7 @@ void Case::setPriceData()
 
 		case 3:  //持续上涨
 
-			for (int i=0; i<vTempInstrument.size(); i++)
+			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
 				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
@@ -237,7 +237,7 @@ void Case::setPriceData()
 
 		case 4: //持续下跌
 
-			for (int i=0; i<vTempInstrument.size(); i++)
+			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
 				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
@@ -260,7 +260,7 @@ void Case::setPriceData()
 
 		case 5:  //随机报单
 
-			for (int i=0; i<vTempInstrument.size(); i++)
+			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
 				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);

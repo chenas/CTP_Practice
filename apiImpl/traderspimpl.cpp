@@ -55,6 +55,9 @@ std::vector<PositionActionPackage> Position;
 //深度行情
 std::map< std::string, CThostFtdcDepthMarketDataField > DepthMarketDataField;
 
+//最新深度行情
+std::map< std::string, CThostFtdcDepthMarketDataField > LastDepthMarketData;
+
 void TradeRspImpl::OnFrontConnected()
 {
 	std::cerr.precision(6); 
@@ -282,6 +285,16 @@ void TradeRspImpl::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDept
 		//mit->second = *pDepthMarketData;
 	}
 	
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator lastmit = LastDepthMarketData.find(key);
+	if (lastmit == LastDepthMarketData.end())
+	{
+		LastDepthMarketData.insert(make_pair(key, *pDepthMarketData));
+	}
+	else
+	{
+		lastmit->second = *pDepthMarketData;
+	}
+
 	if(bIsLast) 
 	{
 		SetEvent(g_hEvent);

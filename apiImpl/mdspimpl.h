@@ -14,6 +14,10 @@
 
 extern HANDLE g_hEvent;
 
+
+//最新深度行情
+extern std::map< std::string, CThostFtdcDepthMarketDataField > LastDepthMarketData;
+
 class MdRspImpl : public CThostFtdcMdSpi
 {
 public:

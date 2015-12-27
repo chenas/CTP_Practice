@@ -98,6 +98,119 @@ void MarketUtil::writeSeparator(const char* msg)
 	_mdRspImpl->writeSeparator(msg);
 }
 
+///获得涨停价
+double MarketUtil::getUpperLimitPrice(const char* instrumentId) const
+{
+	double price = 0.0;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		price = (mit->second).UpperLimitPrice;
+	}
+	return price;
+}
+
+///获得跌停价
+double MarketUtil::getLowerLimitPrice(const char* instrumentId) const
+{
+	double price = 0.0;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		price = (mit->second).LowerLimitPrice;
+	}
+	return price;
+}
+
+///获得最新价，当最新价为0，则返回昨结算价
+double MarketUtil::getLastPrice(const char* instrumentId) const
+{
+	double price = 0.0;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		if ((mit->second).LastPrice == 0)
+		{
+			price = (mit->second).PreSettlementPrice;
+		}
+		else
+			price = (mit->second).LastPrice;
+	}
+	return price;
+}
+
+///获得买一价
+double MarketUtil::getBidPrice(const char* instrumentId) const 
+{
+	double price = 0.0;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		price = (mit->second).BidPrice1;
+	}
+	return price;
+}
+
+void MarketUtil::getBidPrice(const char* instrumentId, double& bidPrice1, int& bidVolume1) const
+{
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		bidPrice1 = (mit->second).BidPrice1;
+		bidVolume1 = (mit->second).BidVolume1;
+	}
+}
+
+///获得卖一价
+double MarketUtil::getAskPrice(const char* instrumentId) const
+{
+	double price = 0.0;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		price = (mit->second).AskPrice1;
+	}
+	return price;
+}
+
+void MarketUtil::getAskPrice(const char* instrumentId, double& askPrice1, int& askVolume1) const
+{	
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(instrumentId);
+	if (mit == LastDepthMarketData.end())
+	{
+		std::cerr << "can not find depthmarketdata for " << instrumentId << std::endl;
+	}
+	else
+	{
+		askPrice1 = (mit->second).AskPrice1;
+		askVolume1 = (mit->second).AskVolume1;
+	}
+}
+
 void MarketUtil::userLogin()
 {
 	CThostFtdcReqUserLoginField loginField;

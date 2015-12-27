@@ -95,7 +95,18 @@ void MdRspImpl::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarke
 	if (isPrintPrice)
 	{
 		mdlogstream << "InstrumentID: " << pDepthMarketData->InstrumentID << " LastPrice: " << pDepthMarketData->LastPrice << " UpdateTime: " << pDepthMarketData->UpdateTime << std::endl;
-	}	
+	}
+	
+	std::string key = pDepthMarketData->InstrumentID;
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = LastDepthMarketData.find(key);
+	if (mit == LastDepthMarketData.end())
+	{
+		LastDepthMarketData.insert(make_pair(key, *pDepthMarketData));
+	}
+	else  //¸üÐÂ
+	{
+		mit->second = *pDepthMarketData;
+	}
 }
 
 

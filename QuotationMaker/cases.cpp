@@ -93,24 +93,25 @@ void Cases::run()
 bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, int volume)
 {
 	pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
-	Sleep(10);
 	pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
-	Sleep(600);
-	if (limitPrice == pTrader->getLastPrice(instrumentId))
+	//pTrader->getLastPrice(instrumentId);
+	double lastPrice = pMarketUtil->getLastPrice(instrumentId);
+	if (limitPrice == lastPrice)
 		return true;
 	else
 		return false;
 }
 
-///将最新价提高到指定价格
+///废弃： 将最新价提高到指定价格
 bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp, int volume)
 {
-	pTrader->getLastPrice(instrumentId);
+	//pTrader->getLastPrice(instrumentId);
+	double lastPrice = pMarketUtil->getLastPrice(instrumentId);
 	if (isUp)
 	{
 		pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
 		pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
-		if (limitPrice == UpperLimitPrice)
+		if (limitPrice == lastPrice)
 		{
 			return true;
 		}
@@ -119,7 +120,7 @@ bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, bool isU
 	{
 		pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
 		pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
-		if (limitPrice == LowerLimitPrice)
+		if (limitPrice == lastPrice)
 		{
 			return true;
 		}
@@ -171,9 +172,9 @@ void Cases::initData()
 	//}
 	std::cout << "-----------------------------" << std::endl;
 
-	//pTrader->qryPosition();
-	//ResetEvent(g_hEvent);
-	//WaitForSingleObject(g_hEvent, INFINITE);
+	pTrader->qryPosition(vCases[0]->getFunctionWithData().find(1)->second);
+	ResetEvent(g_hEvent);
+	WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///保持涨停/跌停
@@ -195,7 +196,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 			data.erase(data.begin() + i);  ///删除没有价格的合约
 		}
 
-		while(!makeLimitPrice(data[i]->InstrumentId, price, isUp, data[i]->Volume))  ///待增加超时机制 **********
+		while(!makeLimitPrice(data[i]->InstrumentId, price, data[i]->Volume))  ///待增加超时机制 **********
 		{
 		}	
 		if (isUp)
@@ -214,15 +215,19 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 		for (unsigned int i=0; i<data.size(); i++)
 		{
 			NoTradedNumber =0;  //重置
-			int _noTraded = pTrader->qryOrder(data[i]->InstrumentId);
+			//int _noTraded = 0;
+			//pTrader->qryOrder(data[i]->InstrumentId);
 			Sleep(1000);
 			if (isUp)
 			{
-				double bidPrice = pTrader->getBidPrice(data[i]->InstrumentId);  ///买一价				
+				int bidVolume = 0;
+				double bidPrice = 0.0;
+				pMarketUtil->getBidPrice(data[i]->InstrumentId, bidPrice, bidVolume);
+				//double bidPrice = pTrader->getBidPrice(data[i]->InstrumentId);  ///买一价				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				Sleep(1000);
-				std::cout << "--------"<< BidPrice1 <<"----------"<< bidPrice << "--------" << data[i]->HighestPrice << "-----------" << data[i]->InstrumentId << std::endl;
-				if ((data[i]->HoldVolume <= _noTraded) && (bidPrice == data[i]->HighestPrice))
+				//Sleep(1000);
+				std::cout << "------买一量："<< bidVolume <<"--------买一价："<< bidPrice << "------涨停价：" << data[i]->HighestPrice << "-----------" << data[i]->InstrumentId << std::endl;
+				if ((data[i]->HoldVolume <= bidVolume) && (bidPrice == data[i]->HighestPrice))
 				{
 					continue;
 				}
@@ -235,11 +240,13 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 			else
 			{
 				double askPrice = 0.0;
-				askPrice = pTrader->getAskPrice(data[i]->InstrumentId);				
+				int askVolume = 0;
+				pMarketUtil->getAskPrice(data[i]->InstrumentId, askPrice, askVolume);
+				//askPrice = pTrader->getAskPrice(data[i]->InstrumentId);				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				Sleep(1000);
-				std::cout << "--------"<< AskPrice1 <<"----------"<< askPrice << "--------" << data[i]->LowestPrice << "-----------" << data[i]->InstrumentId << std::endl;
-				if ((data[i]->HoldVolume <= _noTraded) && (askPrice == data[i]->LowestPrice))
+				//Sleep(1000);
+				std::cout << "------卖一量："<< askVolume <<"--------卖一价："<< askPrice << "------跌停价：" << data[i]->LowestPrice << "-----------" << data[i]->InstrumentId << std::endl;
+				if ((data[i]->HoldVolume <= askVolume) && (askPrice == data[i]->LowestPrice))
 				{
 					continue;
 				}
