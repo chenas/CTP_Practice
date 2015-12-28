@@ -53,6 +53,8 @@ extern std::vector<OrderActionPackge> NoTradedOrder;
 extern int NoTradedNumber;
 ///持仓
 extern std::vector<PositionActionPackage> Position;
+///程序启动时的深度行情，不更新
+extern std::map< std::string, CThostFtdcDepthMarketDataField > FirstDepthMarketData;
 
 class Trader
 {

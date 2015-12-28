@@ -47,12 +47,16 @@ void Cases::run()
 				Sleep(100);
 				break;
 			case 3:
+				vCases[i]->getPriceData(3, (*mit).second); //更新数据
+				vCases[i]->show(3);
 				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, true);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
 			case 4:
+				vCases[i]->getPriceData(4, (*mit).second);  //更新数据
+				vCases[i]->show(4);
 				pMarketUtil->subcribeMarketData((*mit).second);
 				holdChane((*mit).second, false);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
@@ -164,7 +168,7 @@ void Cases::initData()
 	}
 
 	std::cout << "---->>>初始化数据结束" << std::endl;
-
+	//Sleep(1000);
 	//vector<Case *>::iterator cit;
 	//for (cit=vCases.begin(); cit!=vCases.end(); cit++)
 	//{
@@ -172,9 +176,9 @@ void Cases::initData()
 	//}
 	std::cout << "-----------------------------" << std::endl;
 
-	pTrader->qryPosition(vCases[0]->getFunctionWithData().find(1)->second);
-	ResetEvent(g_hEvent);
-	WaitForSingleObject(g_hEvent, INFINITE);
+	//pTrader->qryPosition(vCases[0]->getFunctionWithData().find(1)->second);
+	//ResetEvent(g_hEvent);
+	//WaitForSingleObject(g_hEvent, INFINITE);
 }
 
 ///保持涨停/跌停

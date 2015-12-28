@@ -52,8 +52,11 @@ int NoTradedNumber = 0;
 ///持仓
 std::vector<PositionActionPackage> Position;
 
-//深度行情
-std::map< std::string, CThostFtdcDepthMarketDataField > DepthMarketDataField;
+///程序启动时的深度行情，不更新
+std::map< std::string, CThostFtdcDepthMarketDataField > FirstDepthMarketData;
+
+///主动发起查询时更新
+std::map< std::string, CThostFtdcDepthMarketDataField > MidDepthMarketData;
 
 //最新深度行情
 std::map< std::string, CThostFtdcDepthMarketDataField > LastDepthMarketData;
@@ -275,16 +278,30 @@ void TradeRspImpl::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDept
 	AskPrice1 = pDepthMarketData->AskPrice1;
 
 	std::string key = pDepthMarketData->InstrumentID;
-	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(key);
-	if (mit == DepthMarketDataField.end())
+
+	///作为平仓数据使用
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = FirstDepthMarketData.find(key);
+	if (mit == FirstDepthMarketData.end())
 	{
-		DepthMarketDataField.insert(make_pair(key, *pDepthMarketData));
+		FirstDepthMarketData.insert(make_pair(key, *pDepthMarketData));
 	}
 	else
 	{
 		//mit->second = *pDepthMarketData;
 	}
 	
+	///作为每个功能的初始化数据，主动查询时更新
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator midMit = MidDepthMarketData.find(key);
+	if (midMit == MidDepthMarketData.end())
+	{
+		MidDepthMarketData.insert(make_pair(key, *pDepthMarketData));
+	}
+	else
+	{
+		midMit->second = *pDepthMarketData;
+	}
+
+	///最新行情初始化，订阅深度行情，跟着交易所行情一起更新
 	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator lastmit = LastDepthMarketData.find(key);
 	if (lastmit == LastDepthMarketData.end())
 	{

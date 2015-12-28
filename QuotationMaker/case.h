@@ -13,8 +13,11 @@
 
 extern set<string> AllInstrumentId;
 extern map< string, double > AllInstrumentIdWithPriceTick;
-//深度行情
-extern std::map< std::string, CThostFtdcDepthMarketDataField > DepthMarketDataField;
+///程序启动时的深度行情，不更新
+extern std::map< std::string, CThostFtdcDepthMarketDataField > FirstDepthMarketData;
+
+///主动发起查询时更新
+extern std::map< std::string, CThostFtdcDepthMarketDataField > MidDepthMarketData;
 
 class Case
 {
@@ -33,10 +36,13 @@ public:
 
 	void setPriceData();
 
+	void getPriceData(int function, vector<PriceData*> &vPriceData);
+
 	map<int, vector<PriceData *>> getFunctionWithData();
 	
 	int ID;
 	void show();
+	void show(int function);
 
 private:
 	
@@ -69,6 +75,8 @@ private:
 		int timeout, int maxVolume, int frequency, int volume, int holdVolume);
 	PriceData* initPriceData(CThostFtdcDepthMarketDataField DepthMarketDataField, double change, 
 		double priceTick, int timeout, int maxVolume, int frequency, int volume, int holdVolume);
+
+	void reInitPriceData(PriceData& data, bool isUp);
 };
 
 class CaseFactory

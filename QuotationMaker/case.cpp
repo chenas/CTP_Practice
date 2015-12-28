@@ -141,7 +141,7 @@ void Case::SetHoldVolume(string holdVolume)
 
 void Case::setPriceData()
 {
-	pTrader->qryDepthMarketData();
+	pTrader->qryDepthMarketData(); //查询最新行情
 	vector<int>::iterator it;
 	vector<string>::iterator sit;
 	int index = 0;
@@ -170,9 +170,9 @@ void Case::setPriceData()
 
 			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
-				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
+				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
-				if (mit == DepthMarketDataField.end())
+				if (mit == MidDepthMarketData.end())
 				{
 					std::cout << "can not find DepthMarketData for " << vTempInstrument[i] << std::endl;
 					continue;
@@ -193,9 +193,9 @@ void Case::setPriceData()
 
 			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
-				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
+				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
-				if (mit == DepthMarketDataField.end())
+				if (mit == MidDepthMarketData.end())
 				{
 					std::cout << "can not find DepthMarketData for " << vTempInstrument[i] << std::endl;
 					continue;
@@ -216,9 +216,9 @@ void Case::setPriceData()
 
 			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
-				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
+				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
-				if (mit == DepthMarketDataField.end())
+				if (mit == MidDepthMarketData.end())
 				{
 					std::cout << "can not find DepthMarketData for " << vTempInstrument[i] << std::endl;
 					continue;
@@ -239,9 +239,9 @@ void Case::setPriceData()
 
 			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
-				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
+				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
-				if (mit == DepthMarketDataField.end())
+				if (mit == MidDepthMarketData.end())
 				{
 					std::cout << "can not find DepthMarketData for " << vTempInstrument[i] << std::endl;
 					continue;
@@ -262,9 +262,9 @@ void Case::setPriceData()
 
 			for (unsigned int i=0; i<vTempInstrument.size(); i++)
 			{
-				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = DepthMarketDataField.find(vTempInstrument[i]);
+				std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(vTempInstrument[i]);
 				std::map< string, double >::iterator mitTick = AllInstrumentIdWithPriceTick.find(vTempInstrument[i]);
-				if (mit == DepthMarketDataField.end())
+				if (mit == MidDepthMarketData.end())
 				{
 					std::cout << "can not find DepthMarketData for " << vTempInstrument[i] << std::endl;
 					continue;
@@ -292,6 +292,63 @@ void Case::setPriceData()
 	}
 }
 
+void Case::getPriceData(int function, vector<PriceData*> &vPriceData)
+{
+	switch(function)
+	{
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		pTrader->qryDepthMarketData(); //查询最新行情
+		for (int i=0; i<vPriceData.size(); i++)
+		{
+			reInitPriceData(*vPriceData[i], true);
+		}
+		break;
+	case 4:
+		pTrader->qryDepthMarketData(); //查询最新行情
+		for (int i=0; i<vPriceData.size(); i++)
+		{
+			reInitPriceData(*vPriceData[i], false);
+		}
+		break;
+	case 5:
+		break;
+	default:
+		break;
+	}
+}
+
+void Case::reInitPriceData(PriceData &data, bool isUp)
+{
+	std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = MidDepthMarketData.find(data.InstrumentId);
+
+	if (mit == MidDepthMarketData.end())
+	{
+		std::cout << "can not find DepthMarketData for " << data.InstrumentId << std::endl;
+	}
+	else
+	{
+		double currentPrice = (mit->second).LastPrice == 0 ? (mit->second).PreSettlementPrice : (mit->second).LastPrice;
+		data.CurPrice = currentPrice;
+		if (isUp)
+		{
+
+			data.HighestPrice = findHighestPrice((mit->second).UpperLimitPrice, currentPrice, data.Change, data.PriceTick);
+			data.TickCount = ceil((data.HighestPrice - currentPrice)/PriceTick); ///向上取整
+		}
+		else
+		{
+			data.LowestPrice = findLowestPrice((mit->second).LowerLimitPrice, currentPrice, data.Change, data.PriceTick);
+			data.TickCount = ceil((currentPrice - data.LowestPrice)/PriceTick);			
+		}
+	}
+
+
+}
+
 ///分解后的case写入到文件
 void Case::show()
 {
@@ -313,6 +370,36 @@ void Case::show()
 				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
 				<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
 				<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+		}
+	}
+	o_file << std::endl;
+	o_file.close();
+}
+
+///分解后的case写入到文件
+void Case::show(int function)
+{
+	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
+	map<int, vector<PriceData*>>::iterator mit;
+	o_file << TimeUtil::getTimeNow() << std::endl;
+	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
+	{
+		if (mit->first == function)
+		{
+			//std::cout << "NO: " << ID << " Function: " << mit->first << " ";
+			o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+			vector<PriceData*> data = mit->second;
+			vector<PriceData*>::iterator it;
+			for (it = data.begin(); it != data.end(); it++)
+			{
+				//std::cout << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+				//<< " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
+				o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+					<< " Change: " << (*it)->Change 
+					<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
+					<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
+					<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+			}
 		}
 	}
 	o_file << std::endl;

@@ -321,12 +321,16 @@ void Trader::qryPosition(vector<PriceData *> vData)
 	{
 		double closePrice = 0.0;
 		int vSize = vData.size();
-		for (int j=0; j<vSize; j++)
+		string key = Position[i].InstrumentID;
+		std::map< std::string, CThostFtdcDepthMarketDataField >::iterator mit = FirstDepthMarketData.find(key);
+		if (mit == FirstDepthMarketData.end())
 		{
-			if (vData[j]->InstrumentId == Position[i].InstrumentID)
-			{
-				closePrice = vData[j]->CurPrice;
-			}
+			std::cout << "can not find depthmarketdata for " << mit->first << std::endl;
+			closePrice = 0.0;
+		}
+		else 
+		{
+			closePrice = (mit->second).LastPrice;
 		}
 		if (closePrice == 0.0)
 		{
@@ -344,6 +348,7 @@ void Trader::qryPosition(vector<PriceData *> vData)
 			for (int k=0; k<temp; k++)
 			{
 				sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, 100, closePrice);
+				Sleep(100);
 			}
 			if (leftVolume > 0)
 			{
@@ -357,6 +362,7 @@ void Trader::qryPosition(vector<PriceData *> vData)
 			for (int k=0; k<temp; k++)
 			{
 				sendOrder(Position[i].InstrumentID.c_str(), buySell, 4, 100, closePrice);
+				Sleep(100);
 			}
 			if (leftVolume > 0)
 			{
