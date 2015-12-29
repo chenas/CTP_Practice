@@ -5,6 +5,8 @@
 string cfgFilePath = "../cfg/maker_rsh.cfg";
 string caseFilePath = "../cfg/cases.cfg";
 
+DWORD g_dwStart = 0;
+
 Cases::Cases()
 {
 	pTrader = new Trader();
@@ -21,6 +23,7 @@ Cases::Cases()
 void Cases::run()
 {
 	Sleep(300);
+	DWORD dwStart = 0;
 	pMarketUtil->openMdLog();
 	for (unsigned int i=0; i<vCases.size(); i++)
 	{
@@ -28,8 +31,10 @@ void Cases::run()
 		///行情开始标记
 		pMarketUtil->writeSeparator((TimeUtil::getTimeNow() + " case:  " + StringUtil::intToStr(vCases[i]->ID) + " begin").c_str());
 		vCases[i]->show();
-		map<int, vector<PriceData *>> mFunctionWithData = vCases[i]->getFunctionWithData();
-		map<int, vector<PriceData *>>::iterator mit;
+		//map<int, vector<PriceData *>, DisableCompare<int> > mFunctionWithData = vCases[i]->getFunctionWithData();
+		vector<pair<int, vector<PriceData *>> > mFunctionWithData = vCases[i]->getVFunctionWithData();
+		//map<int, vector<PriceData *>, DisableCompare<int> >::iterator mit;
+		vector<pair<int, vector<PriceData *>> >::iterator mit;
 		for (mit = mFunctionWithData.begin(); mit != mFunctionWithData.end(); mit++)
 		{
 			switch ((*mit).first)
@@ -37,12 +42,15 @@ void Cases::run()
 			case 1:
 				pMarketUtil->subcribeMarketData((*mit).second);
 				makeLimit((*mit).second, true);
+				vCases[i]->show(1, GetTickCount() - g_dwStart);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
 			case 2:
 				pMarketUtil->subcribeMarketData((*mit).second);
+				dwStart = GetTickCount(); 
 				makeLimit((*mit).second, false);
+				vCases[i]->show(2, GetTickCount() - g_dwStart);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
@@ -50,7 +58,9 @@ void Cases::run()
 				vCases[i]->getPriceData(3, (*mit).second); //更新数据
 				vCases[i]->show(3);
 				pMarketUtil->subcribeMarketData((*mit).second);
+				dwStart = GetTickCount();
 				holdChane((*mit).second, true);
+				vCases[i]->show(3, GetTickCount() - dwStart);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
@@ -58,13 +68,17 @@ void Cases::run()
 				vCases[i]->getPriceData(4, (*mit).second);  //更新数据
 				vCases[i]->show(4);
 				pMarketUtil->subcribeMarketData((*mit).second);
+				dwStart = GetTickCount();
 				holdChane((*mit).second, false);
+				vCases[i]->show(4, GetTickCount() - dwStart);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
 			case 5:
 				pMarketUtil->subcribeMarketData((*mit).second);
+				dwStart = GetTickCount();
 				sendOrderRandom((*mit).second);
+				vCases[i]->show(4, GetTickCount() - dwStart);
 				pMarketUtil->unSubscribeMarketData((*mit).second);
 				Sleep(100);
 				break;
@@ -97,7 +111,9 @@ void Cases::run()
 bool Cases::makeLimitPrice(const char* instrumentId, double limitPrice, int volume)
 {
 	pTrader->sendOrder(instrumentId, 0, 0, volume, limitPrice);
+	Sleep(5);
 	pTrader->sendOrder(instrumentId, 1, 0, volume, limitPrice);
+	Sleep(100);
 	//pTrader->getLastPrice(instrumentId);
 	double lastPrice = pMarketUtil->getLastPrice(instrumentId);
 	if (limitPrice == lastPrice)
@@ -213,6 +229,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 		}
 	}
 	DWORD dwStart = GetTickCount(); //取windows启动到现在的流逝时间(毫秒)
+	g_dwStart = GetTickCount();
 
 	while (dwUsed <= (data[0]->TimeOut * 1000))
 	{
@@ -221,7 +238,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 			NoTradedNumber =0;  //重置
 			//int _noTraded = 0;
 			//pTrader->qryOrder(data[i]->InstrumentId);
-			Sleep(1000);
+			//Sleep(1000);
 			if (isUp)
 			{
 				int bidVolume = 0;
@@ -229,7 +246,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 				pMarketUtil->getBidPrice(data[i]->InstrumentId, bidPrice, bidVolume);
 				//double bidPrice = pTrader->getBidPrice(data[i]->InstrumentId);  ///买一价				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				//Sleep(1000);
+				Sleep(500);
 				std::cout << "------买一量："<< bidVolume <<"--------买一价："<< bidPrice << "------涨停价：" << data[i]->HighestPrice << "-----------" << data[i]->InstrumentId << std::endl;
 				if ((data[i]->HoldVolume <= bidVolume) && (bidPrice == data[i]->HighestPrice))
 				{
@@ -248,7 +265,7 @@ void Cases::makeLimit(vector<PriceData *> data, bool isUp)
 				pMarketUtil->getAskPrice(data[i]->InstrumentId, askPrice, askVolume);
 				//askPrice = pTrader->getAskPrice(data[i]->InstrumentId);				
 				//std::cout << "NoTradedNumber  " << NoTradedNumber << std::endl;
-				//Sleep(1000);
+				Sleep(500);
 				std::cout << "------卖一量："<< askVolume <<"--------卖一价："<< askPrice << "------跌停价：" << data[i]->LowestPrice << "-----------" << data[i]->InstrumentId << std::endl;
 				if ((data[i]->HoldVolume <= askVolume) && (askPrice == data[i]->LowestPrice))
 				{
@@ -350,11 +367,11 @@ DWORD WINAPI holdChangeWithOne(LPVOID pParam)
 	int timeEachTick = 0;
 	if (mod == 0 && data->TickCount != 0)
 	{
-		timeEachTick  = ceil(double(data->TimeOut * 1000 / data->TickCount));	
+		timeEachTick  = floor(double(data->TimeOut * 1000 / data->TickCount));	 //向下取整
 	}
 	else if(mod != 0 && data->TickCount != 0)
 	{
-		timeEachTick = ceil(double(data->TimeOut * 1000 / data->TickCount));
+		timeEachTick = floor(double(data->TimeOut * 1000 / data->TickCount));
 	}
 	else if(data->TickCount == 0)
 	{

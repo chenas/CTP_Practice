@@ -151,7 +151,7 @@ void timemain()
 }
 
 #include <sstream>
-void main()
+void mainQQ()
 {
 	ifstream fin( "../cfg/cases.cfg" ); 
 	string line;
@@ -165,6 +165,34 @@ void main()
 		w >> s;
 		cout << s << endl;
 	}
- 
+
 	system("pause");
+}
+
+
+bool
+	strict_weak_ordering(const std::pair<int,std::string> a, const std::pair<int,std::string>  b)    
+
+{      
+	return a.first < b.first;      
+}      
+
+int main()      
+{      
+	using namespace std;      
+
+	 vector<pair<int, string> > vec;      
+
+		vec.push_back(make_pair<int, string>(5, "5hello"));      
+		vec.push_back(make_pair<int, string>(4, "4hell"));      
+		vec.push_back(make_pair<int, string>(6, "6hello,"));      
+
+		//sort(vec.begin(), vec.end(), strict_weak_ordering);      
+
+		vector<pair<int, string> >::iterator it = vec.begin(), end = vec.end();      
+
+		for(; it != end; ++it)      
+			cout<<it->second<<endl;
+	system("pause");  
+		return 0;        
 }

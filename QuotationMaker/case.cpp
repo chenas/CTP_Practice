@@ -9,12 +9,17 @@ Case::~Case()
 Case::Case(Trader* pTrader)
 {
 	this->pTrader = pTrader;
-	map<int, vector<PriceData *>>().swap(mFunctionWithData);
+	map<int, vector<PriceData *> >().swap(mFunctionWithData);
 }
 
-map< int, vector<PriceData *> > Case::getFunctionWithData()
+map<int, vector<PriceData *> > Case::getFunctionWithData()
 {
 	return mFunctionWithData;
+}
+
+vector<pair<int, vector<PriceData *>> > Case::getVFunctionWithData()
+{
+	return this->vFunctionWithData;
 }
 
 void Case::setID(string id)
@@ -285,13 +290,15 @@ void Case::setPriceData()
 			break;
 		}
 		index++;
-		mFunctionWithData.insert(pair<int, vector<PriceData*>> (*it, data));
+		mFunctionWithData.insert(pair<int, vector<PriceData *> > (*it, data));
+		vFunctionWithData.push_back(make_pair<int, vector<PriceData *>> (*it, data));
 		vector<PriceData*>().swap(data);
 		vector<string>().swap(vTemp);
 		vector<string>().swap(vTempInstrument);
 	}
 }
 
+///最新数据
 void Case::getPriceData(int function, vector<PriceData*> &vPriceData)
 {
 	switch(function)
@@ -353,7 +360,7 @@ void Case::reInitPriceData(PriceData &data, bool isUp)
 void Case::show()
 {
 	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
-	map<int, vector<PriceData*>>::iterator mit;
+	map<int, vector<PriceData *> >::iterator mit;
 	o_file << TimeUtil::getTimeNow() << std::endl;
 	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
 	{
@@ -380,26 +387,40 @@ void Case::show()
 void Case::show(int function)
 {
 	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
-	map<int, vector<PriceData*>>::iterator mit;
+	map<int, vector<PriceData *> >::iterator mit;
+	o_file << TimeUtil::getTimeNow() << std::endl;
+	mit == mFunctionWithData.find(function);
+	if (mit == mFunctionWithData.end())
+	{
+		o_file << "can not find function with data for " << function << std::endl;
+	}
+	else
+	{
+		o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+		vector<PriceData*> data = mit->second;
+		vector<PriceData*>::iterator it;
+		for (it = data.begin(); it != data.end(); it++)
+		{
+			o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+				<< " Change: " << (*it)->Change 
+				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
+				<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
+				<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+		}
+	}
+	o_file << std::endl;
+	o_file.close();
+}
+void Case::show(int function, DWORD usedTime)
+{
+	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
+	map<int, vector<PriceData *> >::iterator mit;
 	o_file << TimeUtil::getTimeNow() << std::endl;
 	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
 	{
 		if (mit->first == function)
 		{
-			//std::cout << "NO: " << ID << " Function: " << mit->first << " ";
-			o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
-			vector<PriceData*> data = mit->second;
-			vector<PriceData*>::iterator it;
-			for (it = data.begin(); it != data.end(); it++)
-			{
-				//std::cout << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
-				//<< " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
-				o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
-					<< " Change: " << (*it)->Change 
-					<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
-					<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
-					<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
-			}
+			o_file << "NO: " << ID << " Function: " << mit->first << " UsedTime: " << usedTime << "ms" << std::endl;
 		}
 	}
 	o_file << std::endl;
@@ -619,7 +640,6 @@ PriceData* Case::initPriceData(CThostFtdcDepthMarketDataField DepthMarketDataFie
 
 	return data;
 }
-
 
 CaseFactory::~CaseFactory()
 {

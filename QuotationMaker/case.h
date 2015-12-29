@@ -37,12 +37,14 @@ public:
 	void setPriceData();
 
 	void getPriceData(int function, vector<PriceData*> &vPriceData);
-
-	map<int, vector<PriceData *>> getFunctionWithData();
+	
+	map<int, vector<PriceData *> > getFunctionWithData();
+	vector<pair<int, vector<PriceData *>> > getVFunctionWithData();
 	
 	int ID;
 	void show();
 	void show(int function);
+	void show(int function, DWORD usedTime);
 
 private:
 	
@@ -57,7 +59,8 @@ private:
 	///每笔单的手数，作为挂单
 	vector<int> vHoldVolume;
 
-	map<int, vector<PriceData *>> mFunctionWithData;
+	map<int, vector<PriceData *> > mFunctionWithData;
+	vector<pair<int, vector<PriceData *>> > vFunctionWithData;
 
 	Trader* pTrader;
 	

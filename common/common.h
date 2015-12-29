@@ -8,6 +8,7 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <map>
 #include "../utility/timeutil.h"
 #include "../utility/stringutil.h"
 
@@ -35,7 +36,7 @@ public:
 	static void erasefiles();
 
 private:
-	
+
 
 };
 
