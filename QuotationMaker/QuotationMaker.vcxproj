@@ -57,7 +57,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>thosttraderapi.lib;thostmduserfastapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\SFIT\vs2010\ctptest\ctpapi;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ctpapi;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,7 +87,6 @@
     <ClCompile Include="..\utility\stringutil.cpp" />
     <ClCompile Include="..\utility\timeutil.cpp" />
     <ClCompile Include="case.cpp" />
-    <ClCompile Include="casebuilder.cpp" />
     <ClCompile Include="cases.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -102,7 +101,6 @@
     <ClInclude Include="..\utility\stringutil.h" />
     <ClInclude Include="..\utility\timeutil.h" />
     <ClInclude Include="case.h" />
-    <ClInclude Include="casebuilder.h" />
     <ClInclude Include="cases.h" />
   </ItemGroup>
   <ItemGroup>

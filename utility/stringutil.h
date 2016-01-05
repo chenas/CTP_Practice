@@ -18,6 +18,10 @@ public:
 	static void stringToVector(string source, string separator, vector<int>& v);
 	///除去字符串中的数字
 	static string delNum(string s);
+	
+	static string doubleToStr(double d);
+	static string arrayToStr(char a[]);
+
 };
 
 #endif

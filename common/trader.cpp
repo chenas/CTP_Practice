@@ -105,11 +105,11 @@ void Trader::sendOrder(const char* instrumentId, int buySell, int openClose, int
 	if(!testMode)
 	{
 		int rtn = tradeApi->ReqOrderInsert(&inputOrder, ++reqId);
-		std::cerr << "---->>>发送报单请求" << (rtn == 0 ? "成功":"失败") << std::endl;
+		//std::cerr << "---->>>发送报单请求" << (rtn == 0 ? "成功":"失败") << std::endl;
 	}
-	Common::record2Stdout(instrumentId, buySell, openClose, volume, price);
+	//Common::record2Stdout(instrumentId, buySell, openClose, volume, price);
+	
 	Common::record2File(instrumentId, buySell, openClose, volume, price);
-
 }
 
 ///涨停价
@@ -355,8 +355,8 @@ void Trader::qryPosition(vector<PriceData *> vData)
 				sendOrder(Position[i].InstrumentID.c_str(), buySell, 3, leftVolume, closePrice);
 			}			
 		}
-		if (Position[i].YdPosition > 0)  ///平昨
-		{
+		if (false)  ///平昨 Position[i].YdPosition > 0
+ 		{
 			int temp = Position[i].YdPosition / 100;
 			int leftVolume = Position[i].YdPosition % 100;
 			for (int k=0; k<temp; k++)

@@ -19,6 +19,9 @@ extern std::map< std::string, CThostFtdcDepthMarketDataField > FirstDepthMarketD
 ///主动发起查询时更新
 extern std::map< std::string, CThostFtdcDepthMarketDataField > MidDepthMarketData;
 
+
+extern DWORD g_dwWritenSize;
+
 class Case
 {
 public:

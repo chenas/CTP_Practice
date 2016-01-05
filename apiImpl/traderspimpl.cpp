@@ -63,7 +63,7 @@ std::map< std::string, CThostFtdcDepthMarketDataField > LastDepthMarketData;
 
 void TradeRspImpl::OnFrontConnected()
 {
-	std::cerr.precision(6); 
+	std::cerr.precision(2); 
 	std::cerr.setf(std::ios::fixed); 
 	//std::cerr.setf(std::cerr.showpoint);
 	std::cerr << "--->>> " << __FUNCTION__ << std::endl;

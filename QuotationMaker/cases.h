@@ -77,7 +77,7 @@ private:
 	void MainMenu();
 
 	///limitPrice 将市场上的合约推至此价格
-	bool makeLimitPrice(const char* instrumentId, double limitPrice, int volume);
+	bool makeLimitPrice(const char* instrumentId, double limitPrice, int volume, bool isUp);
 	bool makeLimitPrice(const char* instrumentId, double limitPrice, bool isUp, int volume);
 
 	///根据涨跌幅算出价格区间

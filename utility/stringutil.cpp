@@ -18,8 +18,17 @@ string StringUtil::shortToStr(short s)
 
 string StringUtil::intToStr(int d)
 {
-	char buff[16];
+	char buff[32];
 	sprintf_s(buff, "%d", d);
+	string res = buff;
+	return res;
+}
+
+string StringUtil::doubleToStr(double d)
+{
+
+	char buff[32];
+	sprintf_s(buff, "%f", d);
 	string res = buff;
 	return res;
 }
@@ -32,6 +41,12 @@ int StringUtil::stringToInt(string s)
 double StringUtil::stringToDouble(string s)
 {
 	return atof(s.c_str());
+}
+
+string StringUtil::arrayToStr(char a[])
+{
+	string s(&a[0], &a[strlen(a)]);
+	return s;
 }
 
 void StringUtil::stringToVector(string source, string separator, vector<string>& v)

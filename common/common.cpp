@@ -6,17 +6,23 @@
 ///openClose 开平标志  0.开仓   1.平仓  3.平今
 void Common::record2File(const char *instrumentId, int buySell, int openClose, int volume, double price)
 {
-	std::ofstream o_file(TradingLogFilePath,std::ios::app);
-	o_file << TimeUtil::getTimeNow4Log() << "_" << instrumentId << "_" << (buySell == 0?"买":"卖")
-		<< "_" << (openClose == 0?"开仓":"平仓") << "_" << volume << "_" << price << std::endl; 
-	o_file.close();						//关闭文件
+	std::string strLog = TimeUtil::getTimeNow4Log() + "_" + instrumentId + "_" + (buySell == 0?"买":"卖")
+		+ "_" + (openClose == 0?"开仓":"平仓") + "_" + StringUtil::intToStr(volume) + "_" + StringUtil::doubleToStr(price) + "\r\n"; 
+	BOOL bRet = WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
+
+	//std::ofstream o_file(TradingLogFilePath,std::ios::app);
+	//o_file << TimeUtil::getTimeNow4Log() << "_" << instrumentId << "_" << (buySell == 0?"买":"卖")
+	//	<< "_" << (openClose == 0?"开仓":"平仓") << "_" << volume << "_" << price << std::endl; 
+	//o_file.close();						//关闭文件
 }
 
 void Common::record2File(const char *msg)
 {
-	std::ofstream o_file(TradingLogFilePath,std::ios::app);
-	o_file << "--------------------------" << msg <<"--------------------------"<< std::endl; 
-	o_file.close();				//关闭文件
+	BOOL bRet = WriteFile(g_hFile,msg,strlen(msg),&g_dwWritenSize,NULL);
+
+	//std::ofstream o_file(TradingLogFilePath,std::ios::app);
+	//o_file << "--------------------------" << msg <<"--------------------------"<< std::endl; 
+	//o_file.close();				//关闭文件
 }
 
 void Common::log2File(const char* msg)

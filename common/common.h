@@ -14,6 +14,10 @@
 
 static string TradingLogFilePath = "../cfg/trading_log.txt";
 
+extern HANDLE g_hFile;
+
+extern DWORD g_dwWritenSize;
+
 class Common
 {
 
@@ -36,7 +40,6 @@ public:
 	static void erasefiles();
 
 private:
-
 
 };
 

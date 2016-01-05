@@ -2,8 +2,12 @@
 
 #ifndef _TRADER_H_
 #define _TRADER_H_
+#pragma warning(disable: 4996)
+#pragma warning(disable: 4018)
+#pragma   comment(lib, "winmm.lib ") 
 #include <iostream>
 #include <windows.h>
+#include <stdio.h>
 #include "../utility/cfgutil.h"
 #include "../apiImpl/traderspimpl.h"
 #include "common.h"

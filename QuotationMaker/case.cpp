@@ -359,72 +359,119 @@ void Case::reInitPriceData(PriceData &data, bool isUp)
 ///分解后的case写入到文件
 void Case::show()
 {
-	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
+
+	std::string strLog =  "\r\n"; 
+	BOOL bRet = WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
+
 	map<int, vector<PriceData *> >::iterator mit;
-	o_file << TimeUtil::getTimeNow() << std::endl;
 	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
 	{
-		//std::cout << "NO: " << ID << " Function: " << mit->first << " ";
-		o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+		strLog = "NO: " + StringUtil::intToStr(ID) + " Function: " + StringUtil::intToStr(mit->first) + "\r\n";
+		WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 		vector<PriceData*> data = mit->second;
 		vector<PriceData*>::iterator it;
 		for (it = data.begin(); it != data.end(); it++)
 		{
 			//std::cout << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
 			//<< " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
-			o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
-				<< " Change: " << (*it)->Change 
-				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
-				<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
-				<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+			strLog = " instrument: " + StringUtil::arrayToStr((*it)->InstrumentId) + " timeout: " + StringUtil::intToStr((*it)->TimeOut )
+				+ " Change: " + StringUtil::doubleToStr((*it)->Change) 
+				+ " CurrentPrice: " + StringUtil::doubleToStr((*it)->CurPrice)+ " PriceTick: " + StringUtil::intToStr((*it)->PriceTick) 
+				+ " TickCount: " + StringUtil::intToStr((*it)->TickCount) + " Volume: " + StringUtil::intToStr((*it)->Volume) 
+				+ " HoldVolume: " + StringUtil::intToStr((*it)->HoldVolume) + "\r\n";
+			WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 		}
 	}
-	o_file << std::endl;
-	o_file.close();
+
+	//std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);
+	//o_file << TimeUtil::getTimeNow() << std::endl;
+	//map<int, vector<PriceData *> >::iterator mit;
+	//for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
+	//{
+	//	//std::cout << "NO: " << ID << " Function: " << mit->first << " ";
+	//	o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+	//	vector<PriceData*> data = mit->second;
+	//	vector<PriceData*>::iterator it;
+	//	for (it = data.begin(); it != data.end(); it++)
+	//	{
+	//		//std::cout << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+	//		//<< " PriceTick: " << (*it)->PriceTick << " TickCount: " << (*it)->TickCount << std::endl;
+	//		o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+	//			<< " Change: " << (*it)->Change 
+	//			<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
+	//			<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
+	//			<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+	//	}
+	//}
+	//o_file << std::endl;
+	//o_file.close();
 }
 
 ///分解后的case写入到文件
 void Case::show(int function)
 {
-	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
-	map<int, vector<PriceData *> >::iterator mit;
-	o_file << TimeUtil::getTimeNow() << std::endl;
-	mit == mFunctionWithData.find(function);
+	std::string strLog =  "\r\n";
+	BOOL bRet = WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
+
+	map<int, vector<PriceData *> >::iterator mit = mFunctionWithData.find(function);
 	if (mit == mFunctionWithData.end())
-	{
-		o_file << "can not find function with data for " << function << std::endl;
+	{		
+		strLog = "can not find function with data for \r\n";
+		WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 	}
 	else
 	{
-		o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+		strLog = "NO: " + StringUtil::intToStr(ID) + " Function: " + StringUtil::intToStr(mit->first) + "\r\n";
+		WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 		vector<PriceData*> data = mit->second;
 		vector<PriceData*>::iterator it;
 		for (it = data.begin(); it != data.end(); it++)
 		{
-			o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
-				<< " Change: " << (*it)->Change 
-				<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
-				<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
-				<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+			strLog = " instrument: " + StringUtil::arrayToStr((*it)->InstrumentId) + " timeout: " + StringUtil::intToStr((*it)->TimeOut )
+				+ " Change: " + StringUtil::doubleToStr((*it)->Change) 
+				+ " CurrentPrice: " + StringUtil::doubleToStr((*it)->CurPrice) + " PriceTick: " + StringUtil::intToStr((*it)->PriceTick) 
+				+ " TickCount: " + StringUtil::intToStr((*it)->TickCount) + " Volume: " + StringUtil::intToStr((*it)->Volume) 
+				+ " HoldVolume: " + StringUtil::intToStr((*it)->HoldVolume) + "\r\n";
+			WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 		}
 	}
-	o_file << std::endl;
-	o_file.close();
+
+
+	//std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);
+	//o_file << TimeUtil::getTimeNow() << std::endl;
+	//map<int, vector<PriceData *> >::iterator mit = mFunctionWithData.find(function);
+	//if (mit == mFunctionWithData.end())
+	//{
+	//	o_file << "can not find function with data for " << function << std::endl;
+	//}
+	//else
+	//{
+	//	o_file << "NO: " << ID << " Function: " << mit->first << std::endl;
+	//	vector<PriceData*> data = mit->second;
+	//	vector<PriceData*>::iterator it;
+	//	for (it = data.begin(); it != data.end(); it++)
+	//	{
+	//		o_file << " instrument: " << (*it)->InstrumentId << " timeout: " << (*it)->TimeOut 
+	//			<< " Change: " << (*it)->Change 
+	//			<< " CurrentPrice: " << (*it)->CurPrice << " PriceTick: " << (*it)->PriceTick 
+	//			<< " TickCount: " << (*it)->TickCount << " Volume: " << (*it)->Volume 
+	//			<< " HoldVolume: " << (*it)->HoldVolume<< std::endl;
+	//	}
+	//}
+	//o_file << std::endl;
+	//o_file.close();
 }
 void Case::show(int function, DWORD usedTime)
 {
-	std::ofstream o_file("../cfg/trading_log.txt",std::ios::app);			
 	map<int, vector<PriceData *> >::iterator mit;
-	o_file << TimeUtil::getTimeNow() << std::endl;
 	for (mit=mFunctionWithData.begin(); mit!=mFunctionWithData.end(); mit++)
 	{
 		if (mit->first == function)
-		{
-			o_file << "NO: " << ID << " Function: " << mit->first << " UsedTime: " << usedTime << "ms" << std::endl;
+		{			
+			std::string strLog =  " Function: " + StringUtil::intToStr(mit->first) + " UsedTime: " + StringUtil::intToStr(usedTime) + "ms \r\n";
+			WriteFile(g_hFile,strLog.c_str(),strlen(strLog.c_str()),&g_dwWritenSize,NULL);
 		}
 	}
-	o_file << std::endl;
-	o_file.close();
 }
 
 ///找到最低价

@@ -63,7 +63,7 @@ void MdRspImpl::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThos
 //––«È∂©‘ƒ ß∞‹œÏ”¶
 void MdRspImpl::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
-	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
+	//std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	if (pRspInfo->ErrorID != 0)
 	{
 		std::cout << pRspInfo->ErrorMsg << std::endl;
@@ -76,7 +76,7 @@ void MdRspImpl::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificI
 
 void MdRspImpl::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
-	std::cerr << "--->>> " << __FUNCTION__ << std::endl;
+	//std::cerr << "--->>> " << __FUNCTION__ << std::endl;
 	if (pRspInfo->ErrorID != 0)
 	{
 		std::cout << pRspInfo->ErrorMsg << std::endl;
